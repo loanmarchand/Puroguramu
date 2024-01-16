@@ -1,0 +1,25 @@
+include:
+  - project: 'lessons/info/ue19/ci'
+    ref: main
+    file:
+      - 'dotnet.yml'
+variables:
+  NET_VERSION: "8.0"
+  BUILD_DOCKER: "false"
+  
+package:docker2:
+  stage: package
+  needs:
+    - build:dotnet
+  image:
+    name: gcr.io/kaniko-project/executor:v1.14.0-debug
+    entrypoint: [""]
+  script:
+    - /kaniko/executor
+      --context "${CI_PROJECT_DIR}"
+      --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
+      --destination="${GITLAB_USER_LOGIN}"
+      --tar-path=/"${GITLAB_USER_LOGIN}.tar"
+      --no-push 
+
+
