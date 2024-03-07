@@ -5,6 +5,6 @@ include:
       - 'dotnet.yml'
 variables:
   NET_VERSION: "6.0"
-  BUILD_DOCKER: "false"
+  BUILD_DOCKER: "true"
 
 
