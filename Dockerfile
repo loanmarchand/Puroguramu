@@ -3,18 +3,18 @@ WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["Porugumaru.App/Porugumaru.App.csproj", "Porugumaru.App/"]
-RUN dotnet restore "Porugumaru.App/Porugumaru.App.csproj"
+COPY ["Puroguramu.App/Puroguramu.App.csproj", "Puroguramu.App/"]
+RUN dotnet restore "Puroguramu.App/Puroguramu.App.csproj"
 COPY . .
-WORKDIR "/src/Porugumaru.App"
-RUN dotnet build "Porugumaru.App.csproj" -c Release -o /app/build
+WORKDIR "/src/Puroguramu.App"
+RUN dotnet build "Puroguramu.App.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "Porugumaru.App.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "Puroguramu.App.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 EXPOSE 80
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Porugumaru.App.dll"]
+ENTRYPOINT ["dotnet", "Puroguramu.App.dll"]
 

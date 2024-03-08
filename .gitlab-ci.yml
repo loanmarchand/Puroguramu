@@ -7,4 +7,3 @@ variables:
   NET_VERSION: "6.0"
   BUILD_DOCKER: "true"
 
-
