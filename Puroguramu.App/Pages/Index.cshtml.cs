@@ -1,61 +1,46 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Puroguramu.Domains;
+using Puroguramu.Domains.Repository;
+using Puroguramu.Infrastructures.dto;
 
 namespace Puroguramu.App.Pages;
 
 public class IndexModel : PageModel
 {
-    private readonly IAssessExercise _assessor;
+    private readonly SignInManager<Utilisateurs> _signInManager;
+    private readonly ILeconsRepository _leconsRepository;
+    private readonly IExercisesRepository _exercisesRepository;
 
-    private ExerciseResult? _result;
+    public IndexModel(SignInManager<Utilisateurs> signInManager, ILeconsRepository leconsRepository, IExercisesRepository exercisesRepository)
+    {
+        _signInManager = signInManager;
+        _leconsRepository = leconsRepository;
+        _exercisesRepository = exercisesRepository;
+    }
 
-    [BindProperty]
-    public string Proposal { get; set; } = string.Empty;
+    public string? LeconsDispos { get; set; }
 
-    public string ExerciseResultStatus
-        => _result?.Status switch
+    public string? ExosDispos { get; set; }
+    public int CountEtudiant { get; set; }
+
+
+    public IActionResult OnGet()
+    {
+        // Vérifie si l'utilisateur est déjà connecté
+        if (_signInManager.IsSignedIn(User))
         {
-            ExerciseStatus.NotStarted => "Not Started",
-            ExerciseStatus.Started => "Started",
-            ExerciseStatus.Passed => "Succeeded",
-            ExerciseStatus.Failed => "Failed",
-            _ => "Unknown"
-        };
+            // Redirige vers la page HomePage si l'utilisateur est déjà connecté
+            return RedirectToPage("./HomePage");
+        }
 
-    public IEnumerable<TestResultViewModel> TestResult
-        => _result
-            ?.TestResults
-            ?.Select(result => new TestResultViewModel(result)) ?? Array.Empty<TestResultViewModel>();
+        CountEtudiant = _signInManager.UserManager.Users.Count();
+        LeconsDispos = _leconsRepository.GetLecons().Count().ToString();
+        ExosDispos = _exercisesRepository.GetExercisesCount().ToString();
 
-    public IndexModel(IAssessExercise assessor)
-    {
-        _assessor = assessor;
+        // Continue avec la page Index si l'utilisateur n'est pas connecté
+        return Page();
     }
-
-    public async Task OnGetAsync()
-    {
-        _result = await _assessor.StubForExercise(Guid.Empty);
-        Proposal = _result.Proposal;
-    }
-
-    public async Task OnPostAsync()
-    {
-        _result = await _assessor.Assess(Guid.Empty, Proposal);
-    }
-}
-
-public record TestResultViewModel(TestResult Result)
-{
-    public string Status
-        => Result.Status.ToString();
-
-    public string Label
-        => Result.Label;
-
-    public bool HasError
-        => Result.Status != TestStatus.Passed;
-
-    public string ErrorMessage
-        => Result.ErrorMessage;
 }

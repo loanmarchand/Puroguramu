@@ -22,6 +22,7 @@ using Puroguramu.Infrastructures.dto;
 
 namespace Puroguramu.App.Areas.Identity.Pages.Account
 {
+    [AllowAnonymous]
     public class RegisterModel : PageModel
     {
         private readonly SignInManager<Utilisateurs> _signInManager;

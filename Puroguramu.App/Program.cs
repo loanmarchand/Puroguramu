@@ -3,9 +3,10 @@ using Puroguramu.App.Middlewares;
 using Puroguramu.Domains;
 using Puroguramu.Infrastructures.data;
 using Puroguramu.Infrastructures.dto;
-using Puroguramu.Infrastructures.Dummies;
 using Puroguramu.Infrastructures.Roslyn;
 using Microsoft.AspNetCore.Identity;
+using Puroguramu.Domains.Repository;
+using Puroguramu.Infrastructures.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,7 +24,8 @@ builder.Services.AddScoped<ILogger, Logger<object>>();
 builder.Services.AddScoped<ReverseProxyLinksMiddleware>();
 builder.Services.AddScoped<IExercisesRepository, DummyExercisesRepository>();
 builder.Services.AddScoped<IAssessExercise, RoslynAssessor>();
-
+builder.Services.AddScoped<ILeconsRepository, LeconsRepository>();
+builder.Services.AddScoped<IExercisesRepository, ExercicesRepository>();
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())

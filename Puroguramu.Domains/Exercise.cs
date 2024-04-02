@@ -2,23 +2,34 @@
 
 public class Exercise
 {
+    public string Titre { get; set; }
+
+    public string Enonce { get; set; }
+
+    public string Modele { get; set; }
+
+    public string Solution { get; set; }
+
+    public bool EstVisible { get; set; }
+
+    public string Difficulte { get; set; }
     private readonly string _template = @"// code-insertion-point
 
-public class Test 
+public class Test
 {
-    public static TestResult Ensure(float b, int exponent, float expected) 
+    public static TestResult Ensure(float b, int exponent, float expected)
     {
       TestStatus status = TestStatus.Passed;
       float actual = float.NaN;
-      try 
+      try
       {
          actual = Exercice.Power(b, exponent);
-         if(Math.Abs(actual - expected) > 0.00001f) 
+         if(Math.Abs(actual - expected) > 0.00001f)
          {
              status = TestStatus.Failed;
          }
-      } 
-      catch(Exception ex) 
+      }
+      catch(Exception ex)
       {
          status = TestStatus.Inconclusive;
       }
@@ -27,7 +38,7 @@ public class Test
         string.Format(""Power of {0} by {1} should be {2}"", b, exponent, expected),
         status,
         status == TestStatus.Passed ? string.Empty : string.Format(""Expected {0}. Got {1}."", expected, actual)
-      );  
+      );
     }
 }
 

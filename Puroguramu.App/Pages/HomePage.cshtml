@@ -1,0 +1,24 @@
+@page
+@model Puroguramu.App.Pages.HomePage
+@{
+    Layout = "_Layout"; // Assurez-vous que le nom correspond au nom de votre fichier layout.
+    ViewData["Title"] = "Accueil";
+}
+
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-2xl font-bold text-center mb-6">Leçons</h1>
+
+    <div class="grid gap-4">
+        @foreach (var lecon in Model.Lecons) {
+            <a href="@Url.Page($"/Lecons/{lecon.Titre}")" class="block p-4 bg-white rounded-lg shadow-lg hover:bg-gray-50 transition">
+                <h2 class="text-xl font-semibold">@lecon.Titre</h2>
+                <p> Exercices faits @Model.NombreExoFait/@Model.NombreExoTotal</p>
+            </a>
+        }
+    </div>
+
+    <div class="flex justify-between items-center mt-8">
+        <button class="px-6 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 transition">Prochain Exercice</button>
+        <button class="px-6 py-2 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 transition">Reprendre Exercices</button>
+    </div>
+</div>

@@ -1,83 +1,57 @@
 ﻿@page
 @model RegisterModel
+
 @{
     ViewData["Title"] = "Register";
 }
 
-<h1>@ViewData["Title"]</h1>
 
-<div class="row">
-    <div class="col-md-4">
-        <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
-            <h2>Create a new account.</h2>
-            <hr />
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-floating">
-                <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" />
-                <label asp-for="Input.Email"></label>
-                <span asp-validation-for="Input.Email" class="text-danger"></span>
-            </div>
-            <div class="form-floating">
-                <input asp-for="Input.Matricule" class="form-control" autocomplete="username" aria-required="true" />
-                <label asp-for="Input.Matricule"></label>
-                <span asp-validation-for="Input.Matricule" class="text-danger"></span>
-            </div>
-            <div class="form-floating">
-                <input asp-for="Input.Nom" class="form-control" autocomplete="username" aria-required="true" />
-                <label asp-for="Input.Nom"></label>
-                <span asp-validation-for="Input.Nom" class="text-danger"></span>
-            </div>
-            <div class="form-floating">
-                <input asp-for="Input.Prenom" class="form-control" autocomplete="username" aria-required="true" />
-                <label asp-for="Input.Prenom"></label>
-                <span asp-validation-for="Input.Prenom" class="text-danger"></span>
-            </div>
-            <div class="form-floating">
-                <input asp-for="Input.Groupe" class="form-control" autocomplete="username" aria-required="true" />
-                <label asp-for="Input.Groupe"></label>
-                <span asp-validation-for="Input.Groupe" class="text-danger"></span>
-            </div>
-            <div class="form-floating">
-                <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" />
-                <label asp-for="Input.Password"></label>
-                <span asp-validation-for="Input.Password" class="text-danger"></span>
-            </div>
-            <div class="form-floating">
-                <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" />
-                <label asp-for="Input.ConfirmPassword"></label>
-                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
-            </div>
-            <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
-        </form>
-    </div>
-    <div class="col-md-6 col-md-offset-2">
-        <section>
-            <h3>Use another service to register.</h3>
-            <hr />
-            @{
-                if ((Model.ExternalLogins?.Count ?? 0) == 0)
-                {
-                    <div>
-                        <p>
-                            There are no external authentication services configured. See this <a href="https://go.microsoft.com/fwlink/?LinkID=532715">article
-                            about setting up this ASP.NET application to support logging in via external services</a>.
-                        </p>
-                    </div>
-                }
-                else
-                {
-                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
-                        <div>
-                            <p>
-                                @foreach (var provider in Model.ExternalLogins)
-                                {
-                                    <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
-                                }
-                            </p>
-                        </div>
-                    </form>
-                }
-            }
+<div class="flex justify-center items-center min-h-screen">
+    <div class="w-full max-w-md">
+        <section class="bg-white shadow-md  border rounded px-8 pt-6 pb-8 mb-4">
+            <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="space-y-4">
+                <h2 class="text-lg font-semibold text-center">Créer un compte</h2>
+                <hr class="my-2" />
+                <div asp-validation-summary="ModelOnly" class="text-red-500"></div>
+                <div class="form-group">
+                    <label asp-for="Input.Email" class="block text-sm font-medium text-gray-700">Email</label>
+                    <input asp-for="Input.Email" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" autocomplete="username" aria-required="true" />
+                    <span asp-validation-for="Input.Email" class="text-red-500 text-xs"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Input.Matricule" class="block text-sm font-medium text-gray-700">Matricule</label>
+                    <input asp-for="Input.Matricule" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" autocomplete="username" aria-required="true" />
+                    <span asp-validation-for="Input.Matricule" class="text-red-500 text-xs"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Input.Nom" class="block text-sm font-medium text-gray-700">Nom</label>
+                    <input asp-for="Input.Nom" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" autocomplete="username" aria-required="true" />
+                    <span asp-validation-for="Input.Nom" class="text-red-500 text-xs"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Input.Prenom" class="block text-sm font-medium text-gray-700">Prénom</label>
+                    <input asp-for="Input.Prenom" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" autocomplete="username" aria-required="true" />
+                    <span asp-validation-for="Input.Prenom" class="text-red-500 text-xs"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Input.Groupe" class="block text-sm font-medium text-gray-700">Groupe</label>
+                    <input asp-for="Input.Groupe" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" autocomplete="username" aria-required="true" />
+                    <span asp-validation-for="Input.Groupe" class="text-red-500 text-xs"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Input.Password" class="block text-sm font-medium text-gray-700">Password</label>
+                    <input asp-for="Input.Password" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" autocomplete="new-password" aria-required="true" />
+                    <span asp-validation-for="Input.Password" class="text-red-500 text-xs"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Input.ConfirmPassword" class="block text-sm font-medium text-gray-700">Confirm Password</label>
+                    <input asp-for="Input.ConfirmPassword" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" autocomplete="new-password" aria-required="true" />
+                    <span asp-validation-for="Input.ConfirmPassword" class="text-red-500 text-xs"></span>
+                </div>
+                <div class="flex justify-center">
+                    <button id="registerSubmit" type="submit" class="mt-2 w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Register</button>
+                </div>
+            </form>
         </section>
     </div>
 </div>

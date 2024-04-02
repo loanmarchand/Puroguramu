@@ -6,44 +6,44 @@
     ViewData["Title"] = "Page d'accueil";
 }
 
-<div class="container">
+<div class="container mx-auto px-4">
     <!-- Titre -->
-    <h1 class="center-align">Purogumaru</h1>
+    <h1 class="text-center text-3xl font-bold">Purogumaru</h1>
     
     <!-- Image -->
-    <div class="row">
-        <div class="col s12 center-align">
-            <img src="images/icon.png" alt="Image d'illustration" class="responsive-img" width="40%">
-        </div>
+    <div class="flex justify-center my-6">
+        <img src="images/icon.png" alt="Image d'illustration" class="max-w-xs md:max-w-sm lg:max-w-md">
     </div>
     
     <!-- Description -->
-    <div class="row">
-        <div class="col s12 center-align">
-            <p>Découvrez et pratiquez le C# avec des exercices interactifs.</p>
-        </div>
+    <div class="text-center my-4">
+        <p>Découvrez et pratiquez le C# avec des exercices interactifs.</p>
     </div>
     
     <!-- Texte divers -->
-    <div class="row">
-        <div class="col s12 m4 center-align">
-            <p>18 Leçons disponibles</p>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-4">
+        <div class="text-center">
+            <p>@Model.LeconsDispos Leçons disponibles</p>
         </div>
-        <div class="col s12 m4 center-align">
-            <p>354 Exercices disponibles</p>
+        <div class="text-center">
+            <p>@Model.ExosDispos Exercices disponibles</p>
         </div>
-        <div class="col s12 m4 center-align">
-            <p>2099 Etudiants inscrits</p>
+        <div class="text-center">
+            <p>@Model.CountEtudiant Etudiants inscrits</p>
         </div>
     </div>
     
     <!-- Boutons -->
-    <div class="row">
-        <div class="col s6 center-align">
-            <a asp-area="Identity" asp-page="/Account/Register" class="waves-effect waves-light btn">S'inscrire</a>
+    <div class="flex justify-around my-6">
+        <div>
+            <a asp-area="Identity" asp-page="/Account/Register" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                S'inscrire
+            </a>
         </div>
-        <div class="col s6 center-align">
-            <a asp-area="Identity" asp-page="/Account/Login" class="waves-effect waves-light btn">Déjà inscrit ? Se connecter</a>
+        <div>
+            <a asp-area="Identity" asp-page="/Account/Login" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                Déjà inscrit ? Se connecter
+            </a>
         </div>
     </div>
     
