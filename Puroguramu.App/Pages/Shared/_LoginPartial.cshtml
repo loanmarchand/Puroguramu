@@ -11,7 +11,14 @@
         <div class="relative">
             <!-- Bouton du profil -->
             <button id="profileMenuButton" class="flex items-center space-x-2 bg-gray-200 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-300 transition-colors duration-300">
-                <img src="~/images/icon.png" alt="Profil" class="h-8 w-8 rounded-full"> <!-- Assurez-vous de remplacer ~/path/to/profilePic.jpg par le chemin réel -->
+                @if(user.ProfilePicture != null)
+                {
+                    <img src="data:image/jpeg;base64,@Convert.ToBase64String(user.ProfilePicture)" alt="Profil" class="h-8 w-8 rounded-full">
+                }
+                else
+                {
+                    <img src="~/images/profilepicture.jpg" alt="Profil" class="h-8 w-8 rounded-full">
+                }
                 <span>@user.Prenom</span>
             </button>
 

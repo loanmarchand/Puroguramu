@@ -52,8 +52,6 @@ namespace Puroguramu.App.Areas.Identity.Pages.Account.Manage
         /// </summary>
         public class InputModel
         {
-            [Display(Name = "Photo de profil")]
-            public IFormFile PdP { get; set; }
 
             [Required]
             [EmailAddress]
@@ -76,6 +74,11 @@ namespace Puroguramu.App.Areas.Identity.Pages.Account.Manage
             [RegularExpression(@"^[0-9]$", ErrorMessage = "Le groupe doit être un chiffre")]
 
             public string Groupe { get; set; }
+
+            [Display(Name = "Image de profil")]
+            public IFormFile ProfilePicture { get; set; }
+
+            public string CurrentProfilePictureBase64 { get; set; }
         }
 
         private async Task LoadAsync(Utilisateurs user)
@@ -99,9 +102,19 @@ namespace Puroguramu.App.Areas.Identity.Pages.Account.Manage
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
-            await LoadAsync(user);
+            // Initialisation de Input ici avant de l'utiliser
+            Input = new InputModel();
+
+            if (user.ProfilePicture != null)
+            {
+                // Console.WriteLine(user.ProfilePicture.Length); // Assurez-vous que cette ligne ne cause pas de problème
+                Input.CurrentProfilePictureBase64 = Convert.ToBase64String(user.ProfilePicture);
+            }
+
+            await LoadAsync(user); // Cette méthode doit aussi correctement initialiser `Input`
             return Page();
         }
+
 
         public async Task<IActionResult> OnPostAsync()
         {
@@ -113,38 +126,30 @@ namespace Puroguramu.App.Areas.Identity.Pages.Account.Manage
 
             if (!ModelState.IsValid)
             {
-                await LoadAsync(user);
+                await LoadAsync(user); // Rechargez les informations en cas d'erreur
                 return Page();
             }
 
-            user.Nom = Input.Nom;
-            user.Prenom = Input.Prenom;
-            user.Groupe = Input.Groupe;
-            if (Input.PdP != null && Input.PdP.Length > 0)
+            if (Input.ProfilePicture != null)
             {
                 using (var memoryStream = new MemoryStream())
                 {
-                    await Input.PdP.CopyToAsync(memoryStream);
-
-                    // Stockez l'image en tant que tableau d'octets dans la base de données
+                    await Input.ProfilePicture.CopyToAsync(memoryStream);
                     user.ProfilePicture = memoryStream.ToArray();
-                    // Redirection ou gestion des résultats comme nécessaire
                 }
             }
 
-            // Mettre à jour l'utilisateur dans la base de données
+            // Mise à jour de l'utilisateur dans la base de données
             var result = await _userManager.UpdateAsync(user);
-
             if (!result.Succeeded)
             {
-                throw new InvalidOperationException($"Unexpected error occurred while updating user with ID '{user.Id}'.");
+                throw new InvalidOperationException($"Unexpected error occurred updating user with ID '{user.Id}'.");
             }
 
-            // Rafraîchir la connexion de l'utilisateur
             await _signInManager.RefreshSignInAsync(user);
-
-            StatusMessage = "Your profile has been updated";
+            StatusMessage = "Votre profil a été mis à jour";
             return RedirectToPage();
         }
+
     }
 }
