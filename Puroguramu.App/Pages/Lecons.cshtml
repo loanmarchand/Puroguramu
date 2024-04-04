@@ -1,0 +1,49 @@
+@page "/Lecons/{LeconTitre}"
+@model Puroguramu.App.Pages.Lecons
+
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = Model.LeconTitre;
+}
+
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-2xl font-bold text-center mb-6">@Model.LeconTitre</h1>
+    <!--Ajout de la description-->
+    <p class="text-center text-gray-600">@Model.Lecon.Description</p>
+
+    @if (Model.Lecon.ExercicesList.Any())
+    {
+        <div class="space-y-4">
+            @foreach (var exo in Model.Lecon.ExercicesList)
+            {
+                <div class="p-4 bg-white rounded-lg shadow-lg flex justify-between items-center">
+                    <div class="flex items-center">
+                        <a href="@Url.Page("/Exercices/Solution", new { id = exo.Titre, lecon = Model.LeconTitre })" class="mr-4">
+                            <img src="~/images/loupe.png" alt="Voir Solution" class="h-6 w-6"> <!-- Remplacer ~/images/loupe-icon.png par le chemin réel de l'icône -->
+                        </a>
+                        <a href="http://localhost:8080">
+                        <div>
+                            <h2 class="text-xl font-semibold">@exo.Titre</h2>
+                            <p class="text-sm">Difficulté : @exo.Difficulte</p>
+                        </div>
+                        </a>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium">@exo.etat </p>
+                    </div>
+                    
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p class="text-center text-gray-600">Aucun exercice trouvé pour cette leçon.</p>
+    }
+
+    <!-- Exemple de boutons -->
+    <div class="flex justify-between items-center mt-8">
+        <button class="px-6 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-150 ease-in-out">Exercice Suivant</button>
+        <button class="px-6 py-2 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-700 transition duration-150 ease-in-out">Revoir Exercices</button>
+    </div>
+</div>

@@ -19,7 +19,13 @@ public class LeconsRepository : ILeconsRepository
         return  lecons.Select(DtoMapper.MapLecon).ToList();
     }
 
-    public Lecon GetLecon(string idLecons) => throw new NotImplementedException();
+    public Lecon GetLecon(string idLecons)
+    {
+        var lecon = _context.Lecons
+            .Include(l => l.ExercicesList)
+            .FirstOrDefault(l => l.Titre == idLecons);
+        return DtoMapper.MapLecon(lecon);
+    }
 
     public void AddLecon(Lecon lecon) => throw new NotImplementedException();
 
@@ -27,4 +33,17 @@ public class LeconsRepository : ILeconsRepository
 
     public void DeleteLecon(Lecon lecon) => throw new NotImplementedException();
 
+    public IEnumerable<Exercise>? GetExercicesForLecon(string leconTitre)
+    {
+        Console.WriteLine("LeconTitre: " + leconTitre);
+        var lecon = _context.Lecons
+            .Include(l => l.ExercicesList)
+            .FirstOrDefault(l => l.Titre == leconTitre);
+        if (lecon == null)
+        {
+            return new List<Exercise>();
+        }
+
+        return lecon?.ExercicesList?.Select(DtoMapper.MapExercices);
+    }
 }

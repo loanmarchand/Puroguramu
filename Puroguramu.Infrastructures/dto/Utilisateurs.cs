@@ -13,4 +13,7 @@ public class Utilisateurs : IdentityUser
     public string? Groupe { get; set; }
 
     public Role? Role { get; set; }
+
+    public byte[]? ProfilePicture { get; set; }
+
 }

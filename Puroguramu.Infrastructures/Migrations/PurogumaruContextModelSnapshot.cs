@@ -359,6 +359,9 @@ namespace Puroguramu.Infrastructures.Migrations
                     b.Property<string>("Prenom")
                         .HasColumnType("TEXT");
 
+                    b.Property<byte[]>("ProfilePicture")
+                        .HasColumnType("BLOB");
+
                     b.Property<int?>("Role")
                         .HasColumnType("INTEGER");
 

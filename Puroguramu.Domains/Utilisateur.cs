@@ -11,4 +11,5 @@ public class Utilisateur
     public string? Groupe { get; set; }
 
     public Role? Role { get; set; }
+
 }

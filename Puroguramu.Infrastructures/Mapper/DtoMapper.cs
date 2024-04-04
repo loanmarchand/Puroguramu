@@ -1,5 +1,6 @@
 ﻿using Puroguramu.Domains;
 using Puroguramu.Infrastructures.dto;
+using Status = Puroguramu.Domains.Status;
 
 namespace Puroguramu.Infrastructures.Mapper;
 
@@ -39,6 +40,7 @@ public class DtoMapper
             Solution = exercices.Solution,
             EstVisible = exercices.EstVisible,
             Difficulte = exercices.Difficulte,
+            etat = Status.NotStarted,
         };
     }
 

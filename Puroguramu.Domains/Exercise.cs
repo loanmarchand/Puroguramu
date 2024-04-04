@@ -13,6 +13,8 @@ public class Exercise
     public bool EstVisible { get; set; }
 
     public string Difficulte { get; set; }
+
+    public Status etat;
     private readonly string _template = @"// code-insertion-point
 
 public class Test
@@ -47,6 +49,8 @@ return new TestResult[] {
   Test.Ensure(2, -4, 1.0f/16.0f)
 };
 ";
+
+
 
     public string Stub => @"public class Exercice
 {
