@@ -1,19 +1,79 @@
 @page "/Exercice/{Titre}/{LeconTitre}"
+@using Microsoft.CodeAnalysis.Scripting
+@using Puroguramu.App.Pages
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model Puroguramu.App.Pages.Exercice
 
 @{
     Layout = "_Layout";
 }
 
-<!DOCTYPE html>
+<section>
+    <p class="box content">
+        Créez une fonction <code>Power</code> C# prenant en paramètre 
+        une base <em>b</em> de type <code>float</code> et un exposant <em>e</em> de type <code>int</code>. 
+        <code>Power(b, e)</code> retourne le <code>float</code> <em>b</em><sup><em>e</em></sup>.
+    </p>
+    <form method="post">
+        <div>
+            <div>
+                <span>Status: </span>
+                <strong>Result status (BACKEND)</strong>
+            </div>
+            <div>
+                <div>
+                    <div id="ProposalEditor">Model.proposal BACKEND</div>
+                    <div>
+                        <button>Exécuter</button>
+                    </div>
+                    <input type="hidden"></input>
+                </div>
+                <div>
+                    <h4>Résultats</h4>
+                    @{
+                        string[] tableauDeStrings = new string[3];
 
-<html>
-<head>
-    <title></title>
-</head>
-<body>
-<div>
-    
-</div>
-</body>
-</html>
+                        // Attribution des valeurs aux éléments du tableau
+                        tableauDeStrings[0] = "Première chaîne";
+                        tableauDeStrings[1] = "Deuxième chaîne";
+                        tableauDeStrings[2] = "Troisième chaîne";
+                    }
+                    
+                    @foreach (String testResult in tableauDeStrings)
+                    {
+                        <div>
+                            <h5><span>Status resultat BACKEND()</span>&nbsp;Label.testResult BAKCEND()</h5>
+                            @if (true)
+                            {
+                                <p>testResult.ErrorMessage(BACKEND)</p>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </form>
+</section>
+
+
+@section Scripts{
+<script defer>
+    document.addEventListener('DOMContentLoaded', (evt) => {
+         
+           const proposalEditor = ace.edit("ProposalEditor");
+           const proposalInput = document.getElementById("Proposal");
+           
+           proposalEditor.setTheme("ace/theme/xcode");
+           proposalEditor.session.setMode("ace/mode/csharp");
+           
+           proposalInput.value = proposalEditor.session.getValue();
+           proposalEditor.session.on('change', (evt) => {
+               proposalInput.value = proposalEditor.session.getValue();
+           });           
+    });
+</script>
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js" defer></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js" defer></script>
+
+}
+

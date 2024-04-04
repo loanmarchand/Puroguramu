@@ -22,7 +22,7 @@ public class LeconsRepository : ILeconsRepository
     public Lecon GetLecon(string idLecons)
     {
         var lecon = _context.Lecons
-            .Include(l => l.ExercicesList)
+            .Include(l => l.ExercicesList.Where(e => e.EstVisible))
             .FirstOrDefault(l => l.Titre == idLecons);
         return DtoMapper.MapLecon(lecon);
     }
@@ -44,6 +44,15 @@ public class LeconsRepository : ILeconsRepository
             return new List<Exercise>();
         }
 
-        return lecon?.ExercicesList?.Select(DtoMapper.MapExercices);
+        Console.WriteLine(lecon.ExercicesList);
+
+        foreach (var exe in lecon.ExercicesList)
+        {
+            Console.WriteLine(exe.Titre+"\n");
+        }
+
+        return lecon?.ExercicesList?
+            .Where(e => e.EstVisible)
+            .Select(DtoMapper.MapExercices);
     }
 }

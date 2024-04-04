@@ -53,13 +53,8 @@ namespace Puroguramu.App.Areas.Identity.Pages.Account.Manage
         public class InputModel
         {
 
-            [Required]
-            [EmailAddress]
-            [Display(Name = "Email")]
             public string Email { get; set; }
 
-            [Required(ErrorMessage = "Le champ Matricule est requis")]
-            [RegularExpression(@"^[a-zA-Z][0-9]{6}$", ErrorMessage = "Le matricule doit être une chaîne de 7 caractères commençant par une lettre suivie de chiffres")]
             public string Matricule { get; set; }
 
             [Required(ErrorMessage = "Le champ nom est requis")]
@@ -138,6 +133,10 @@ namespace Puroguramu.App.Areas.Identity.Pages.Account.Manage
                     user.ProfilePicture = memoryStream.ToArray();
                 }
             }
+
+            user.Prenom = Input.Prenom;
+            user.Nom = Input.Nom;
+            user.Groupe = Input.Groupe;
 
             // Mise à jour de l'utilisateur dans la base de données
             var result = await _userManager.UpdateAsync(user);
