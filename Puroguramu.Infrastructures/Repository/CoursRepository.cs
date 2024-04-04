@@ -35,10 +35,10 @@ public class CoursRepository : ICoursRepository
 
         foreach (var lecon in lecons)
         {
-            var leconDto = DtoMapper.MapLecon(lecon.Lecons.FirstOrDefault());
+            var leconDto = DtoMapper.MapLecon(lecon.Lecons.FirstOrDefault()!);
 
-            leconDto.ExercicesFait = 0;
-            leconDto.ExercicesTotal = 0;
+            leconDto.ExercicesFait = 0;//TODO: Get the number of exercises done by the user
+            leconDto.ExercicesTotal = 0;//TODO: Get the total number of exercises
 
             leconsLists.Add(leconDto);
         }
