@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -10,19 +11,17 @@ namespace Puroguramu.App.Pages;
 
 public class HomePage : PageModel
 {
-    private readonly ILeconsRepository _leconsRepository;
+    private readonly ICoursRepository _coursRepository;
     private readonly SignInManager<Utilisateurs> _signInManager; // Ajoutez cette ligne
 
     // Injectez SignInManager dans le constructeur
-    public HomePage(ILeconsRepository leconsRepository, SignInManager<Utilisateurs> signInManager)
+    public HomePage(ICoursRepository coursRepository, SignInManager<Utilisateurs> signInManager)
     {
-        _leconsRepository = leconsRepository;
+        _coursRepository = coursRepository;
         _signInManager = signInManager;
     }
 
-    public IEnumerable<Lecon> Lecons { get; private set; }
-    public int NombreExoFait { get; set; }
-    public int NombreExoTotal { get; set; }
+    public IEnumerable<Cour> Cours { get; set; }
 
     public IActionResult OnGet()
     {
@@ -35,7 +34,7 @@ public class HomePage : PageModel
         }
 
         // Chargez les leçons seulement si l'utilisateur n'est pas connecté
-        Lecons = _leconsRepository.GetLecons();
+        Cours = _coursRepository.GetCours();
 
         // Continuez avec la page normalement pour les utilisateurs non connectés
         return Page();

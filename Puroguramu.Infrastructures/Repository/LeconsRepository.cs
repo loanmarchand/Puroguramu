@@ -26,4 +26,5 @@ public class LeconsRepository : ILeconsRepository
     public void UpdateLecon(Lecon lecon) => throw new NotImplementedException();
 
     public void DeleteLecon(Lecon lecon) => throw new NotImplementedException();
+
 }

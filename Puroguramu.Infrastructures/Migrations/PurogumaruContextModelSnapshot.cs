@@ -149,6 +149,32 @@ namespace Puroguramu.Infrastructures.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Puroguramu.Infrastructures.dto.Cours", b =>
+                {
+                    b.Property<string>("IdCours")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Titre")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("IdCours");
+
+                    b.ToTable("Cours");
+
+                    b.HasData(
+                        new
+                        {
+                            IdCours = "1",
+                            ImageUrl = "~/images/csharp.svg",
+                            Titre = "C#"
+                        });
+                });
+
             modelBuilder.Entity("Puroguramu.Infrastructures.dto.Exercices", b =>
                 {
                     b.Property<string>("IdExercice")
@@ -192,6 +218,9 @@ namespace Puroguramu.Infrastructures.Migrations
                     b.Property<string>("IdLecons")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("CoursIdCours")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -204,6 +233,8 @@ namespace Puroguramu.Infrastructures.Migrations
                         .HasColumnType("INTEGER");
 
                     b.HasKey("IdLecons");
+
+                    b.HasIndex("CoursIdCours");
 
                     b.HasIndex("Titre")
                         .IsUnique();
@@ -414,6 +445,13 @@ namespace Puroguramu.Infrastructures.Migrations
                         .HasForeignKey("LeconsIdLecons");
                 });
 
+            modelBuilder.Entity("Puroguramu.Infrastructures.dto.Lecons", b =>
+                {
+                    b.HasOne("Puroguramu.Infrastructures.dto.Cours", null)
+                        .WithMany("Lecons")
+                        .HasForeignKey("CoursIdCours");
+                });
+
             modelBuilder.Entity("Puroguramu.Infrastructures.dto.PositionExercices", b =>
                 {
                     b.HasOne("Puroguramu.Infrastructures.dto.Exercices", "Exercices")
@@ -445,6 +483,11 @@ namespace Puroguramu.Infrastructures.Migrations
                     b.Navigation("Etudiant");
 
                     b.Navigation("Exercice");
+                });
+
+            modelBuilder.Entity("Puroguramu.Infrastructures.dto.Cours", b =>
+                {
+                    b.Navigation("Lecons");
                 });
 
             modelBuilder.Entity("Puroguramu.Infrastructures.dto.Lecons", b =>

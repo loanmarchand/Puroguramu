@@ -9,4 +9,6 @@ public class Lecon
     public bool estVisible { get; set; }
 
     public IList<Exercise> ExercicesList { get; set; }
+    public int? ExercicesFait { get; set; }
+    public int? ExercicesTotal { get; set; }
 }

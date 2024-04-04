@@ -12,6 +12,8 @@ public class PurogumaruContext : IdentityDbContext<Utilisateurs>
     {
     }
 
+    public DbSet<Cours> Cours { get; set; }
+
     public DbSet<Lecons> Lecons { get; set; }
 
     public DbSet<Exercices> Exercices { get; set; }
@@ -24,6 +26,7 @@ public class PurogumaruContext : IdentityDbContext<Utilisateurs>
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.ApplyConfiguration(new CoursConfiguration());
         modelBuilder.ApplyConfiguration(new LeconsConfiguration());
         modelBuilder.ApplyConfiguration(new ExercicesConfiguration());
         modelBuilder.ApplyConfiguration(new StatutExercicesConfiguration());

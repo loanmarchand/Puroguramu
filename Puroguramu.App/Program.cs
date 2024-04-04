@@ -1,17 +1,17 @@
 using Microsoft.EntityFrameworkCore;
 using Puroguramu.App.Middlewares;
 using Puroguramu.Domains;
+using Puroguramu.Domains.Repository;
 using Puroguramu.Infrastructures.data;
 using Puroguramu.Infrastructures.dto;
-using Puroguramu.Infrastructures.Roslyn;
-using Microsoft.AspNetCore.Identity;
-using Puroguramu.Domains.Repository;
 using Puroguramu.Infrastructures.Repository;
+using Puroguramu.Infrastructures.Roslyn;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
 builder.Services.AddRazorPages();
+builder.Services.AddServerSideBlazor();
 
 builder.Services.AddDbContext<PurogumaruContext>(options =>
 {
@@ -26,6 +26,8 @@ builder.Services.AddScoped<IExercisesRepository, DummyExercisesRepository>();
 builder.Services.AddScoped<IAssessExercise, RoslynAssessor>();
 builder.Services.AddScoped<ILeconsRepository, LeconsRepository>();
 builder.Services.AddScoped<IExercisesRepository, ExercicesRepository>();
+builder.Services.AddScoped<ICoursRepository, CoursRepository>();
+builder.Services.AddScoped<IStatutExerciceRepository, StatutExerciceRepository>();
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
@@ -46,5 +48,6 @@ app.UseAuthentication();;
 app.UseAuthorization();
 
 app.MapRazorPages();
+app.MapBlazorHub();
 
 app.Run();

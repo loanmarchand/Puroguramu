@@ -12,9 +12,22 @@ public class DtoMapper
             Titre = lecons.Titre,
             Description = lecons.Description,
             estVisible = lecons.estVisible,
-            ExercicesList = lecons.ExercicesList.Select(MapExercices).ToList(),
+            // Assurez-vous que lecons.ExercicesList n'est pas null avant de l'utiliser
+            ExercicesList = lecons.ExercicesList?.Select(MapExercices).ToList() ?? new List<Exercise>(),
         };
     }
+
+    public static Cour MapCours(Cours cours)
+    {
+        return new Cour
+        {
+            Titre = cours.Titre,
+            ImageUrl = cours.ImageUrl,
+            // Assurez-vous que cours.Lecons n'est pas null avant de l'utiliser
+            Lecons = cours.Lecons?.Select(MapLecon).ToList() ?? new List<Lecon>(),
+        };
+    }
+
 
     public static Exercise MapExercices(Exercices exercices)
     {
@@ -28,4 +41,6 @@ public class DtoMapper
             Difficulte = exercices.Difficulte,
         };
     }
+
+
 }

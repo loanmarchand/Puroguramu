@@ -4,25 +4,39 @@
 @inject SignInManager<Utilisateurs> SignInManager
 @inject UserManager<Utilisateurs> UserManager
 
-<div class="flex justify-end space-x-4">
+<div class="flex justify-end items-center space-x-4">
     @if (SignInManager.IsSignedIn(User))
     {
-        <span class="nav-item">
-            <a id="manage" class="text-gray-700  hover:text-gray-900  transition-colors" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Profil</a>
-        </span>
-        <span class="nav-item">
-            <form id="logoutForm" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/Index", new { area = "" })">
-                <button id="logout" type="submit" class="text-gray-700  hover:text-gray-900 transition-colors bg-transparent border-none cursor-pointer">Logout</button>
-            </form>
-        </span>
+        <div class="relative">
+            <!-- Bouton du profil -->
+            <button id="profileMenuButton" class="flex items-center space-x-2 bg-gray-200 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-300 transition-colors duration-300">
+                <img src="~/images/icon.png" alt="Profil" class="h-8 w-8 rounded-full"> <!-- Assurez-vous de remplacer ~/path/to/profilePic.jpg par le chemin réel -->
+                <span>Nom de l'utilisateur</span>
+            </button>
+
+            <!-- Menu déroulant -->
+            <div id="profileMenuDropdown" class="hidden absolute right-0 mt-2 py-2 w-48 bg-white rounded-md shadow-xl z-20">
+                <a href="@Url.Page("/Account/Manage/Index", new { area = "Identity" })" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profil</a>
+                <form method="post" asp-area="Identity" asp-page="/Account/Logout">
+                    <button type="submit" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Déconnexion</button>
+                </form>
+            </div>
+        </div>
     }
     else
     {
         <span class="nav-item">
-            <a class="text-gray-50  hover:text-gray-900 transition-colors" id="register" asp-area="Identity" asp-page="/Account/Register">Register</a>
+            <a class="bg-blue-500 text-white hover:bg-blue-600 transition-colors duration-300 py-2 px-4 rounded-md" id="register" asp-area="Identity" asp-page="/Account/Register">Register</a>
         </span>
         <span class="nav-item">
-            <a class="text-gray-50 hover:text-gray-900  transition-colors" id="login" asp-area="Identity" asp-page="/Account/Login">Login</a>
+            <a class="bg-gray-200 text-gray-800 hover:bg-gray-300 transition-colors duration-300 py-2 px-4 rounded-md" id="login" asp-area="Identity" asp-page="/Account/Login">Login</a>
         </span>
     }
 </div>
+
+<script>
+// Toggle du menu déroulant
+document.getElementById('profileMenuButton').addEventListener('click', function() {
+    document.getElementById('profileMenuDropdown').classList.toggle('hidden');
+});
+</script>
