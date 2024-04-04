@@ -25,9 +25,9 @@
                     <label asp-for="Input.PdP" class="block text-sm font-medium text-gray-700">Image de profil</label>
                     <div class="mt-1 flex items-center">
                         <div class="flex-shrink-0 h-12 w-12">
-                            @if (false)
+                            @if (user.ProfilePicture != null)
                             {
-                                //<img id="previewImage" src="data:image/jpeg;base64,@Convert.ToBase64String(user.ProfilePicture)" alt="Image par défaut" class="h-12 w-12 rounded-full">
+                                <img id="previewImage" src="data:image/jpeg;base64,@Convert.ToBase64String(user.ProfilePicture)" alt="Image par défaut" class="h-12 w-12 rounded-full">
                             }
                             else
                             {
@@ -39,7 +39,7 @@
                                 Choisir une image
                             </button>
                             <input type="file" id="fileInput" style="display: none;" accept="image/*" onchange="previewFile()">
-                            <input asp-for="Input.PdP" id="imageData" name="imageData" style="display: none;">
+                            <input  asp-for="Input.PdP" id="imageData" name="imageData">
                             <span asp-validation-for="Input.PdP" class="text-red-500 text-xs"></span>
                         </div>
                     </div>

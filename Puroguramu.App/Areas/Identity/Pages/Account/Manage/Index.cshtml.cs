@@ -120,9 +120,21 @@ namespace Puroguramu.App.Areas.Identity.Pages.Account.Manage
             user.Nom = Input.Nom;
             user.Prenom = Input.Prenom;
             user.Groupe = Input.Groupe;
+            if (Input.PdP != null && Input.PdP.Length > 0)
+            {
+                using (var memoryStream = new MemoryStream())
+                {
+                    await Input.PdP.CopyToAsync(memoryStream);
+
+                    // Stockez l'image en tant que tableau d'octets dans la base de données
+                    user.ProfilePicture = memoryStream.ToArray();
+                    // Redirection ou gestion des résultats comme nécessaire
+                }
+            }
 
             // Mettre à jour l'utilisateur dans la base de données
             var result = await _userManager.UpdateAsync(user);
+
             if (!result.Succeeded)
             {
                 throw new InvalidOperationException($"Unexpected error occurred while updating user with ID '{user.Id}'.");
