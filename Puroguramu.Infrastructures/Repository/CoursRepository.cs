@@ -27,22 +27,11 @@ public class CoursRepository : ICoursRepository
 
     public IEnumerable<Lecon> GetLeconsForCours(string nameCours, string userId)
     {
-        var leconsLists = new List<Lecon>();
         var lecons = _context.Cours
             .Include(l => l.Lecons)
             .ThenInclude(l => l.ExercicesList)
-            .Where(c => c.Titre == nameCours);
+            .FirstOrDefault(c => c.Titre == nameCours);
 
-        foreach (var lecon in lecons)
-        {
-            var leconDto = DtoMapper.MapLecon(lecon.Lecons.FirstOrDefault()!);
-
-            leconDto.ExercicesFait = 0;//TODO: Get the number of exercises done by the user
-            leconDto.ExercicesTotal = 0;//TODO: Get the total number of exercises
-
-            leconsLists.Add(leconDto);
-        }
-
-        return leconsLists;
+        return lecons?.Lecons.Select(DtoMapper.MapLecon).Where(l => l.estVisible).ToList() ?? new List<Lecon>();
     }
 }

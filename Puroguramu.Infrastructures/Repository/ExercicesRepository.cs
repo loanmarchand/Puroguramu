@@ -12,5 +12,5 @@ public class ExercicesRepository : IExercisesRepository
 
     public int GetExercisesCount() => _context.Exercices.Count();
 
-    public Exercise GetExercise(Guid exerciseId) => throw new NotImplementedException();
+    public Exercise GetExercise(string exerciseId) => new Exercise();
 }

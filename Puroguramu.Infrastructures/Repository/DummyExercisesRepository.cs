@@ -7,6 +7,6 @@ public class DummyExercisesRepository : IExercisesRepository
 {
     public int GetExercisesCount() => throw new NotImplementedException();
 
-    public Exercise GetExercise(Guid exerciseId)
+    public Exercise GetExercise(string exerciseId)
         => new Exercise();
 }

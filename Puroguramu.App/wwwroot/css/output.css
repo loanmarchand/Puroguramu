@@ -1000,6 +1000,20 @@ video {
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.ace_editor {
+  border: 1px solid lightgray;
+  margin: auto;
+  height: 256px;
+}
+
+.scrollmargin {
+  height: 80px;
+}
+
+.scrollmargin2 {
+  height: 180px;
+}
+
 .hover\:border-white:hover {
   --tw-border-opacity: 1;
   border-color: rgb(255 255 255 / var(--tw-border-opacity));
@@ -1089,3 +1103,4 @@ video {
     text-align: left;
   }
 }
+

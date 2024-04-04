@@ -13,4 +13,6 @@ public interface ILeconsRepository
     void DeleteLecon(Lecon lecon);
 
     IEnumerable<Exercise>? GetExercicesForLecon(string leconTitre);
+    Exercise GetExercice(string? leconTitre, string? titreExo);
+    string GetExerciceId(string leconTitre, string titre);
 }

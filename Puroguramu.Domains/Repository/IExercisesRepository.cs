@@ -4,5 +4,5 @@ public interface IExercisesRepository
 {
     int GetExercisesCount();
 
-    Exercise GetExercise(Guid exerciseId);
+    Exercise GetExercise(string exerciseId);
 }

@@ -55,4 +55,30 @@ public class LeconsRepository : ILeconsRepository
             .Where(e => e.EstVisible)
             .Select(DtoMapper.MapExercices);
     }
+
+    public Exercise GetExercice(string? leconTitre, string? titreExo)
+    {
+        var lecon = _context.Lecons
+            .Include(l => l.ExercicesList)
+            .FirstOrDefault(l => l.Titre == leconTitre);
+        if (lecon == null)
+        {
+            return new Exercise();
+        }
+
+        return DtoMapper.MapExercices(lecon.ExercicesList.FirstOrDefault(e => e.Titre == titreExo));
+    }
+
+    public string GetExerciceId(string leconTitre, string titre)
+    {
+        var lecon = _context.Lecons
+            .Include(l => l.ExercicesList)
+            .FirstOrDefault(l => l.Titre == leconTitre);
+        if (lecon == null)
+        {
+            return string.Empty;
+        }
+
+        return lecon.ExercicesList.FirstOrDefault(e => e.Titre == titre)?.IdExercice ?? string.Empty;
+    }
 }

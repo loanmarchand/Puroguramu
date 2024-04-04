@@ -22,7 +22,6 @@ builder.Services.AddDefaultIdentity<Utilisateurs>(options => options.SignIn.Requ
 
 builder.Services.AddScoped<ILogger, Logger<object>>();
 builder.Services.AddScoped<ReverseProxyLinksMiddleware>();
-builder.Services.AddScoped<IExercisesRepository, DummyExercisesRepository>();
 builder.Services.AddScoped<IAssessExercise, RoslynAssessor>();
 builder.Services.AddScoped<ILeconsRepository, LeconsRepository>();
 builder.Services.AddScoped<IExercisesRepository, ExercicesRepository>();

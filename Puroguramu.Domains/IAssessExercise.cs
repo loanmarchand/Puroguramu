@@ -2,7 +2,7 @@
 
 public interface IAssessExercise
 {
-    Task<ExerciseResult> Assess(Guid exerciseId, string proposal);
+    Task<ExerciseResult> Assess(string exerciseId, string proposal);
 
-    Task<ExerciseResult> StubForExercise(Guid exerciseId);
+    Task<ExerciseResult> StubForExercise(string exerciseId);
 }

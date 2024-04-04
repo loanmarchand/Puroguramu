@@ -19,7 +19,7 @@ public class RoslynAssessor : IAssessExercise
         _exercisesRepository = repository;
     }
 
-    public async Task<ExerciseResult> Assess(Guid exerciseId, string proposal)
+    public async Task<ExerciseResult> Assess(string exerciseId, string proposal)
     {
         var exercise = _exercisesRepository.GetExercise(exerciseId);
         var codeToRun = exercise.InjectIntoTemplate(proposal);
@@ -38,7 +38,7 @@ public class RoslynAssessor : IAssessExercise
         }
     }
 
-    public async Task<ExerciseResult> StubForExercise(Guid exerciseId)
+    public async Task<ExerciseResult> StubForExercise(string exerciseId)
     {
         var exercise = _exercisesRepository.GetExercise(exerciseId);
 

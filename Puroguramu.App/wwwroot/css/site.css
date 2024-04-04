@@ -2,3 +2,16 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.ace_editor {
+    border: 1px solid lightgray;
+    margin: auto;
+    height: 256px;
+}
+.scrollmargin {
+    height: 80px;
+}
+.scrollmargin2 {
+    height: 180px;
+}
+
