@@ -52,25 +52,42 @@ namespace Puroguramu.App.Areas.Identity.Pages.Account.Manage
         /// </summary>
         public class InputModel
         {
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
-            [Phone]
-            [Display(Name = "Phone number")]
-            public string PhoneNumber { get; set; }
+            [Display(Name = "Photo de profil")]
+            public IFormFile PdP { get; set; }
+
+            [Required]
+            [EmailAddress]
+            [Display(Name = "Email")]
+            public string Email { get; set; }
+
+            [Required(ErrorMessage = "Le champ Matricule est requis")]
+            [RegularExpression(@"^[a-zA-Z][0-9]{6}$", ErrorMessage = "Le matricule doit être une chaîne de 7 caractères commençant par une lettre suivie de chiffres")]
+            public string Matricule { get; set; }
+
+            [Required(ErrorMessage = "Le champ nom est requis")]
+            [RegularExpression(@"^[a-zA-Z\s]*$", ErrorMessage = "Le nom doit être du texte")]
+            public string Nom { get; set; }
+
+            [Required(ErrorMessage = "Le champ prenom est requis")]
+            [RegularExpression(@"^[a-zA-Z\s]*$", ErrorMessage = "Le prenom doit être du texte")]
+            public string Prenom { get; set; }
+
+            [Required(ErrorMessage = "Le champ groupe est requis")]
+            [RegularExpression(@"^[0-9]$", ErrorMessage = "Le groupe doit être un chiffre")]
+
+            public string Groupe { get; set; }
         }
 
         private async Task LoadAsync(Utilisateurs user)
         {
             var userName = await _userManager.GetUserNameAsync(user);
-            var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
 
             Username = userName;
 
             Input = new InputModel
             {
-                PhoneNumber = phoneNumber
+                //PhoneNumber = phoneNumber
+
             };
         }
 
@@ -100,18 +117,20 @@ namespace Puroguramu.App.Areas.Identity.Pages.Account.Manage
                 return Page();
             }
 
-            var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
-            if (Input.PhoneNumber != phoneNumber)
+            user.Nom = Input.Nom;
+            user.Prenom = Input.Prenom;
+            user.Groupe = Input.Groupe;
+
+            // Mettre à jour l'utilisateur dans la base de données
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
             {
-                var setPhoneResult = await _userManager.SetPhoneNumberAsync(user, Input.PhoneNumber);
-                if (!setPhoneResult.Succeeded)
-                {
-                    StatusMessage = "Unexpected error when trying to set phone number.";
-                    return RedirectToPage();
-                }
+                throw new InvalidOperationException($"Unexpected error occurred while updating user with ID '{user.Id}'.");
             }
 
+            // Rafraîchir la connexion de l'utilisateur
             await _signInManager.RefreshSignInAsync(user);
+
             StatusMessage = "Your profile has been updated";
             return RedirectToPage();
         }

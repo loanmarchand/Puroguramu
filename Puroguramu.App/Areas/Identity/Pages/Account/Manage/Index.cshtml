@@ -1,30 +1,100 @@
 ﻿@page
+@using Puroguramu.Infrastructures.dto
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model IndexModel
+@inject UserManager<Utilisateurs> UserManager
+
 @{
     ViewData["Title"] = "Profile";
     ViewData["ActivePage"] = ManageNavPages.Index;
 }
 
-<h3>@ViewData["Title"]</h3>
-<partial name="_StatusMessage" for="StatusMessage" />
-<div class="row">
-    <div class="col-md-6">
-        <form id="profile-form" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-floating">
-                <input asp-for="Username" class="form-control" disabled />
-                <label asp-for="Username" class="form-label"></label>
-            </div>
-            <div class="form-floating">
-                <input asp-for="Input.PhoneNumber" class="form-control" />
-                <label asp-for="Input.PhoneNumber" class="form-label"></label>
-                <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
-            </div>
-            <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
-        </form>
+
+@{
+    var user = await UserManager.GetUserAsync(User);
+}
+<div class="flex justify-center items-center min-h-screen">
+    <partial name="_StatusMessage" for="StatusMessage" />
+    <div class="w-full max-w-md">
+        <section class="bg-white shadow-md  border rounded px-8 pt-6 pb-8 mb-4">
+            <form id="profile-form" method="post">
+                <h2 class="text-lg font-semibold text-center">Éditer le profil</h2>
+                <hr class="my-2"/>
+                <div asp-validation-summary="ModelOnly" class="text-red-500"></div>
+                <div class="form-group py-4">
+                    <label asp-for="Input.PdP" class="block text-sm font-medium text-gray-700">Image de profil</label>
+                    <div class="mt-1 flex items-center">
+                        <div class="flex-shrink-0 h-12 w-12">
+                            @if (false)
+                            {
+                                //<img id="previewImage" src="data:image/jpeg;base64,@Convert.ToBase64String(user.ProfilePicture)" alt="Image par défaut" class="h-12 w-12 rounded-full">
+                            }
+                            else
+                            {
+                                <img id="previewImage" src="~/images/profilepicture.jpg" alt="Image par défaut" class="h-12 w-12 rounded-full">
+                            }
+                        </div>
+                        <div class="ml-4">
+                            <button type="button" onclick="document.getElementById('fileInput').click()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                                Choisir une image
+                            </button>
+                            <input type="file" id="fileInput" style="display: none;" accept="image/*" onchange="previewFile()">
+                            <input asp-for="Input.PdP" id="imageData" name="imageData" style="display: none;">
+                            <span asp-validation-for="Input.PdP" class="text-red-500 text-xs"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Input.Email" class="block text-sm font-medium text-gray-700">Email</label>
+                    <input asp-for="Input.Email" class="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" autocomplete="username" aria-required="true" readonly value="@user.Email"/>
+                    <span asp-validation-for="Input.Email" class="text-red-500 text-xs"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Input.Matricule" class="block text-sm font-medium text-gray-700">Matricule</label>
+                    <input asp-for="Input.Matricule" class="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" autocomplete="username" aria-required="true" readonly value="@user.Matricule"/>
+                    <span asp-validation-for="Input.Matricule" class="text-red-500 text-xs"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Input.Nom" class="block text-sm font-medium text-gray-700">Nom</label>
+                    <input asp-for="Input.Nom" class="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" autocomplete="username" aria-required="true" value="@user.Nom"/>
+                    <span asp-validation-for="Input.Nom" class="text-red-500 text-xs"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Input.Prenom" class="block text-sm font-medium text-gray-700">Prénom</label>
+                    <input asp-for="Input.Prenom" class="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" autocomplete="username" aria-required="true" value="@user.Prenom"/>
+                    <span asp-validation-for="Input.Prenom" class="text-red-500 text-xs"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Input.Groupe" class="block text-sm font-medium text-gray-700">Groupe</label>
+                    <input asp-for="Input.Groupe" class="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" autocomplete="username" aria-required="true" value="@user.Groupe"/>
+                    <span asp-validation-for="Input.Groupe" class="text-red-500 text-xs"></span>
+                </div>
+                <div class="flex justify-center">
+                    <button id="update-profile-button" type="submit" class="mt-2 w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Save</button>
+                </div>
+            </form>
+        </section>
     </div>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        function previewFile() {
+            const preview = document.getElementById('previewImage');
+            const fileInput = document.getElementById('fileInput').files[0];
+            const reader = new FileReader();
+    
+            reader.onloadend = function() {
+                preview.src = reader.result;
+                document.getElementById('imageData').value = reader.result; // Stocker les données de l'image dans un champ caché
+            }
+    
+            if (fileInput) {
+                reader.readAsDataURL(fileInput);
+            } else {
+                preview.src = "chemin/vers/image-par-defaut.jpg"; // Si aucun fichier n'est choisi, afficher l'image par défaut
+            }
+        }
+    </script>
 }

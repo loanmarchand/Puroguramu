@@ -100,9 +100,21 @@ namespace Puroguramu.App.Areas.Identity.Pages.Account
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
 
+            [Required(ErrorMessage = "Le champ Matricule est requis")]
+            [RegularExpression(@"^[a-zA-Z][0-9]{6}$", ErrorMessage = "Le matricule doit être une chaîne de 7 caractères commençant par une lettre suivie de chiffres")]
             public string Matricule { get; set; }
+
+            [Required(ErrorMessage = "Le champ nom est requis")]
+            [RegularExpression(@"^[a-zA-Z\s]*$", ErrorMessage = "Le nom doit être du texte")]
             public string Nom { get; set; }
+
+            [Required(ErrorMessage = "Le champ prenom est requis")]
+            [RegularExpression(@"^[a-zA-Z\s]*$", ErrorMessage = "Le prenom doit être du texte")]
             public string Prenom { get; set; }
+
+            [Required(ErrorMessage = "Le champ groupe est requis")]
+            [RegularExpression(@"^[0-9]$", ErrorMessage = "Le groupe doit être un chiffre")]
+
             public string Groupe { get; set; }
         }
 
@@ -117,8 +129,20 @@ namespace Puroguramu.App.Areas.Identity.Pages.Account
         {
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+
             if (ModelState.IsValid)
             {
+                // Vérification si le matricule existe déjà en base de données
+                var existingUserWithMatricule = _userManager.Users;
+                foreach (var userTest in existingUserWithMatricule)
+                {
+                    if (userTest.Matricule != null && userTest.Matricule.Equals(Input.Matricule))
+                    {
+                        ModelState.AddModelError(string.Empty, "Ce matricule existe déjà.");
+                        return Page();
+                    }
+                }
+
                 var user = CreateUser();
                 user.Groupe = Input.Groupe;
                 user.Matricule = Input.Matricule;
