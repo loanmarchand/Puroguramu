@@ -18,10 +18,10 @@
             {
                 <div class="p-4 bg-white rounded-lg shadow-lg flex justify-between items-center">
                     <div class="flex items-center">
-                        <a href="@Url.Page("/Exercices/Solution", new { id = exo.Titre, lecon = Model.LeconTitre })" class="mr-4">
+                        <a href="@Url.Page("/Exercice/Solution", new { Titre = exo.Titre, LeconTitre = Model.LeconTitre })" class="mr-4">
                             <img src="~/images/loupe.png" alt="Voir Solution" class="h-6 w-6"> <!-- Remplacer ~/images/loupe-icon.png par le chemin réel de l'icône -->
                         </a>
-                        <a href="http://localhost:8080">
+                        <a href="@Url.Page("/Exercice", new { Titre = exo.Titre, LeconTitre = Model.LeconTitre })">
                         <div>
                             <h2 class="text-xl font-semibold">@exo.Titre</h2>
                             <p class="text-sm">Difficulté : @exo.Difficulte</p>
