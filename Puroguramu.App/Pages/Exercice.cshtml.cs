@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Puroguramu.Domains;
 using Puroguramu.Domains.Repository;
+using Puroguramu.Infrastructures.dto;
 
 namespace Puroguramu.App.Pages;
 
@@ -9,6 +11,8 @@ public class Exercice : PageModel
 {
     private readonly IAssessExercise _assessor;
     private readonly ILeconsRepository _leconsRepository;
+    private readonly IStatutExerciceRepository _statutExerciceRepository;
+    private readonly UserManager<Utilisateurs> _userManager;
 
     private ExerciseResult? _result;
 
@@ -38,15 +42,23 @@ public class Exercice : PageModel
 
     public Exercise Exercices { get; set; }
 
-    public Exercice(IAssessExercise assessor, ILeconsRepository leconsRepository)
+    public Exercice(IAssessExercise assessor, ILeconsRepository leconsRepository, IStatutExerciceRepository statutExerciceRepository, UserManager<Utilisateurs> userManager)
     {
         _assessor = assessor;
         _leconsRepository = leconsRepository;
+        _statutExerciceRepository = statutExerciceRepository;
+        _userManager = userManager;
     }
 
     public async Task OnGetAsync()
     {
         Exercices = _leconsRepository.GetExercice(LeconTitre, Titre);
+        var statut =  _statutExerciceRepository.GetStatut(_leconsRepository.GetExerciceId(LeconTitre, Titre),_userManager.GetUserId(User));
+        if (statut == null)
+        {
+            await _statutExerciceRepository.CreateStatut(_leconsRepository.GetExerciceId(LeconTitre, Titre), _userManager.GetUserId(User));
+        }
+
         _result = await _assessor.StubForExercise(_leconsRepository.GetExerciceId(LeconTitre, Titre));
         Proposal = _result.Proposal;
     }

@@ -290,7 +290,6 @@ namespace Puroguramu.Infrastructures.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("SolutionTempo")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Statut")

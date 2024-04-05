@@ -2,8 +2,8 @@ namespace Puroguramu.Domains;
 
 public enum Status
 {
-    Failed=0,
-    NotStarted=1,
+    NotStarted=0,
+    Failed=1,
     Started=2,
     Passed=3,
 }

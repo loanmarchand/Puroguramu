@@ -2,5 +2,6 @@
 
 public interface IStatutExerciceRepository
 {
-    IEnumerable<StatutExercice> GetStatutExercicesForCoursAndEtudiant(string coursTitre, string etudiantId);
+    Status? GetStatut(string getExerciceId, string getUserId);
+    Task CreateStatut(string getExerciceId, string getUserId);
 }

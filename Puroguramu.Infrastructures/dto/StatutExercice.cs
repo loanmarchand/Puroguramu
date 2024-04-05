@@ -13,5 +13,5 @@ public class StatutExercice
 
     public Status Statut { get; set; }
 
-    public string SolutionTempo { get; set; }
+    public string? SolutionTempo { get; set; }
 }

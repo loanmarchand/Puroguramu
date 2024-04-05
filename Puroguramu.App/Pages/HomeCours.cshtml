@@ -15,7 +15,7 @@
             @foreach (var lecon in Model.Lecons)
             {
                 <a href="@Url.Page("/Lecons", new { LeconTitre = lecon.Titre })">
-                <div class="p-4 bg-white rounded-lg shadow-lg flex justify-between items-center">
+                <div class="p-4 bg-white rounded-lg shadow-lg flex justify-between items-center mb-6 hover:bg-gray-100">
                     <div>
                         <h2 class="text-xl font-semibold">@lecon.Titre</h2>
                         @if (!string.IsNullOrEmpty(lecon.Description))
@@ -24,7 +24,7 @@
                         }
                     </div>
                     <div class="text-sm font-medium">
-                        @lecon.ExercicesFait / @lecon.ExercicesTotal Exercices faits
+                        @lecon.ExercicesFait / @lecon.ExercicesTotal Exercices réussis
                     </div>
                 </div>
                 </a>
