@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Puroguramu.Domains;
 using Puroguramu.Domains.Repository;
 using Puroguramu.Infrastructures.data;
 using Puroguramu.Infrastructures.dto;
@@ -46,6 +47,26 @@ public class StatutExerciceRepository : IStatutExerciceRepository
         };
 
         _context.StatutExercices.Add(statut);
+        return _context.SaveChangesAsync();
+    }
+
+    public Task UpdateStatut(string getExerciceId, string getUserId, ExerciseStatus resultStatus)
+    {
+        var status = resultStatus switch
+        {
+            ExerciseStatus.Failed => dto.Status.Failed,
+            ExerciseStatus.NotStarted => dto.Status.NotStarted,
+            ExerciseStatus.Started => dto.Status.Started,
+            ExerciseStatus.Passed => dto.Status.Passed,
+            _ => throw new ArgumentOutOfRangeException(nameof(resultStatus), resultStatus, null)
+        };
+
+        var statut = _context.StatutExercices
+            .Include(s => s.Exercice)
+            .FirstOrDefault(s => s.Exercice.IdExercice == getExerciceId && s.Etudiant.Id == getUserId)!;
+
+        statut.Statut = status;
+        _context.StatutExercices.Update(statut);
         return _context.SaveChangesAsync();
     }
 }

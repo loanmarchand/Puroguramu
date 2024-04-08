@@ -13,8 +13,5 @@ public class ExercicesRepository : IExercisesRepository
 
     public int GetExercisesCount() => _context.Exercices.Count();
 
-    public Exercise GetExercise(string exerciseId)
-    {
-        return DtoMapper.MapExercices(_context.Exercices.Find(exerciseId));
-    }
+    public Exercise GetExercise(string exerciseId) => DtoMapper.MapExercices(_context.Exercices.Find(exerciseId));
 }

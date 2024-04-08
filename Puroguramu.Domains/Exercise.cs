@@ -30,19 +30,6 @@ public class Exercise
 
     public string InjectIntoTemplate(string code)
     {
-        Console.WriteLine(Modele);
-        return _template.Replace("// modele", PreprocessModel(Modele)).Replace("// code-insertion-point", code);
+        return _template.Replace("// modele", Modele).Replace("// code-insertion-point", code);
     }
-
-    public string PreprocessModel(string modelFromDb)
-    {
-        // Échapper les guillemets doubles
-        string escapedModel = modelFromDb.Replace("\"", "\\\"");
-
-        // Doubler les accolades pour string.Format
-        escapedModel = escapedModel.Replace("{", "{{").Replace("}", "}}");
-
-        return escapedModel;
-    }
-
 }

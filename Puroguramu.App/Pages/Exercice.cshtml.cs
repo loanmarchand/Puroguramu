@@ -67,6 +67,7 @@ public class Exercice : PageModel
     {
         Exercices = _leconsRepository.GetExercice(LeconTitre, Titre);
         _result = await _assessor.Assess(_leconsRepository.GetExerciceId(LeconTitre, Titre), Proposal);
+        await _statutExerciceRepository.UpdateStatut(_leconsRepository.GetExerciceId(LeconTitre, Titre), _userManager.GetUserId(User), _result.Status);
     }
 }
 
