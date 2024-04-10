@@ -19,12 +19,10 @@ public class Lecons : PageModel
         _userManager = userManager;
     }
 
-    public void OnGet()
-    {
-        Lecon = _leconsRepository.GetLecon(LeconTitre, _userManager.GetUserId(User));
-    }
+    public void OnGet() => Lecon = _leconsRepository.GetLecon(LeconTitre, _userManager.GetUserId(User));
 
     [BindProperty(SupportsGet = true)]
     public string? LeconTitre { get; set; }
-    public Lecon Lecon{ get; set; }
+
+    public Lecon Lecon { get; set; }
 }

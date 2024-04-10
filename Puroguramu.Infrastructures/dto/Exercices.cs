@@ -9,13 +9,13 @@ public class Exercices
 
     public string Titre { get; set; }
 
-    public string Enonce { get; set; }
+    public string? Enonce { get; set; }
 
-    public string Modele { get; set; }
+    public string? Modele { get; set; }
 
-    public string Solution { get; set; }
+    public string? Solution { get; set; }
 
     public bool EstVisible { get; set; }
 
-    public string Difficulte { get; set; }
+    public string? Difficulte { get; set; }
 }

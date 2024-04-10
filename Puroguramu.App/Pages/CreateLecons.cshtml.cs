@@ -12,10 +12,9 @@ public class CreateLecons : PageModel
 
     public string ReturnUrl { get; set; }
 
-    [BindProperty]
-    public InputModel Input { get; set; }
-    [BindProperty(SupportsGet = true)]
-    public string TitreCours { get; set; }
+    [BindProperty] public InputModel Input { get; set; }
+
+    [BindProperty(SupportsGet = true)] public string TitreCours { get; set; }
 
     public class InputModel
     {
@@ -24,16 +23,17 @@ public class CreateLecons : PageModel
 
     public void OnGet()
     {
-
     }
 
-    public async void OnPostAsync()
+    public async Task<IActionResult> OnPostAsync()
     {
         if (ModelState.IsValid)
         {
             await _leconsRepository.CreateLecon(TitreCours, Input.Titre);
-            ReturnUrl = "/HomeCours/" + TitreCours;
+            return RedirectToPage("/HomeCours", new { TitreCours = TitreCours });
         }
 
+        // If we get here, something went wrong
+        return Page();
     }
 }

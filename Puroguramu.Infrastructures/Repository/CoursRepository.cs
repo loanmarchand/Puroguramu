@@ -19,34 +19,10 @@ public class CoursRepository : ICoursRepository
     public IList<Cour> GetCours()
     {
         var coursList = _context.Cours
-            .Include(c => c.Lecons)
-            .ThenInclude(l => l.ExercicesList)
             .ToList();
 
         return coursList.Select(DtoMapper.MapCours).ToList();
     }
 
-    public IEnumerable<Lecon> GetLeconsForCours(string nameCours, string userId)
-    {
-        var lecona = new List<Lecon>();
-        var lecons = _context.Cours
-            .Include(c => c.Lecons)
-            .ThenInclude(l => l.ExercicesList)
-            .FirstOrDefault(c => c.Titre == nameCours)
-            ?.Lecons;
-
-        foreach (var lecon in lecons)
-        {
-            var nombreExercices = lecon.ExercicesList.Count;
-            var nombreExercicesFait = _context.StatutExercices
-                .Count(se => lecon.ExercicesList.Select(e => e.IdExercice).Contains(se.Exercice.IdExercice) &&
-                             se.Etudiant.Id == userId &&
-                             se.Statut == Status.Passed);
-
-            lecona.Add(DtoMapper.MapLecon(lecon, nombreExercicesFait, nombreExercices));
-        }
-
-        return lecona;
-    }
 }
 

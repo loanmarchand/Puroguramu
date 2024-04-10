@@ -11,6 +11,6 @@ public class Cours
 
     public string ImageUrl { get; set; }
 
-    public IList<Lecons> Lecons { get; set; }
+    public IList<Lecons>? Lecons { get; set; }
 
 }

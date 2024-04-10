@@ -17,7 +17,7 @@ public class LeconsRepository : ILeconsRepository
     {
         var lecons = _context.Lecons
             .Include(l => l.ExercicesList);
-        return lecons.Select(l => DtoMapper.MapLecon(l,null,null)).ToList();
+        return lecons.Select(l => DtoMapper.MapLecon(l, null, null)).ToList();
     }
 
     public Lecon GetLecon(string idLecons, string userId)
@@ -55,9 +55,6 @@ public class LeconsRepository : ILeconsRepository
     }
 
 
-
-
-
     public Exercise GetExercice(string? leconTitre, string? titreExo)
     {
         var lecon = _context.Lecons
@@ -86,12 +83,48 @@ public class LeconsRepository : ILeconsRepository
 
     public Task CreateLecon(string titreCours, string inputTitre)
     {
-        var lecon = new Lecons
+        var lecon = new Lecons { IdLecons = Guid.NewGuid().ToString(), Titre = inputTitre, estVisible = true, };
+        var cours = _context.Cours.Include(c => c.Lecons).FirstOrDefault(c => c.Titre == titreCours);
+        if (cours == null)
         {
-            Titre = inputTitre,
-            Cours = _context.Cours.FirstOrDefault(c => c.Titre == titreCours)
-        };
-        _context.Lecons.Add(lecon);
-        return _context.SaveChangesAsync();
+            return Task.CompletedTask;
+        }
+
+        cours.Lecons.Add(lecon);
+        _context.SaveChanges();
+        return Task.CompletedTask;
+    }
+
+    public IEnumerable<Lecon> GetLeconsForCours(string nameCours, string userId)
+    {
+        var lecona = new List<Lecon>();
+        var leconsList = _context.Cours
+            .Include(c => c.Lecons)!
+            .ThenInclude(l => l.ExercicesList)
+            .FirstOrDefault(c => c.Titre == nameCours)
+            ?.Lecons;
+
+        if (leconsList == null)
+        {
+            return lecona;
+        }
+
+        foreach (var lecon in leconsList)
+        {
+            if (lecon.ExercicesList == null)
+            {
+                continue;
+            }
+
+            var nombreExercices = lecon.ExercicesList.Count;
+            var nombreExercicesFait = _context.StatutExercices
+                .Count(se => lecon.ExercicesList.Select(e => e.IdExercice).Contains(se.Exercice.IdExercice) &&
+                             se.Etudiant.Id == userId &&
+                             se.Statut == dto.Status.Passed);
+
+            lecona.Add(DtoMapper.MapLecon(lecon, nombreExercicesFait, nombreExercices));
+        }
+
+        return lecona;
     }
 }

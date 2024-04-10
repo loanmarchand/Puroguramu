@@ -10,14 +10,12 @@ namespace Puroguramu.App.Pages;
 
 public class HomeCours : PageModel
 {
-    private readonly ICoursRepository _coursRepository;
-    private readonly IStatutExerciceRepository _statutExerciceRepository;
+    private readonly ILeconsRepository _leconsRepository;
     private readonly UserManager<Utilisateurs> _userManager;
 
-    public HomeCours(ICoursRepository coursRepository, IStatutExerciceRepository statutExerciceRepository, UserManager<Utilisateurs> userManager)
+    public HomeCours(ILeconsRepository leconsRepository, UserManager<Utilisateurs> userManager)
     {
-        _coursRepository = coursRepository;
-        _statutExerciceRepository = statutExerciceRepository;
+        _leconsRepository = leconsRepository;
         _userManager = userManager;
     }
 
@@ -30,6 +28,6 @@ public class HomeCours : PageModel
     public async Task OnGetAsync()
     {
         var user = await _userManager.GetUserAsync(User);
-        Lecons = _coursRepository.GetLeconsForCours(TitreCours,user.Id).ToList();
+        Lecons = _leconsRepository.GetLeconsForCours(TitreCours,user.Id).ToList();
     }
 }

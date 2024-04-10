@@ -181,11 +181,9 @@ namespace Puroguramu.Infrastructures.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Difficulte")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Enonce")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("EstVisible")
@@ -195,11 +193,9 @@ namespace Puroguramu.Infrastructures.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Modele")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Solution")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Titre")
@@ -222,7 +218,6 @@ namespace Puroguramu.Infrastructures.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Titre")

@@ -19,17 +19,12 @@ public class DtoMapper
         };
     }
 
-    public static Cour MapCours(Cours cours)
-    {
-        return new Cour
+    public static Cour MapCours(Cours cours) =>
+        new()
         {
             Titre = cours.Titre,
             ImageUrl = cours.ImageUrl,
-
-            // Assurez-vous que cours.Lecons n'est pas null avant de l'utiliser
-            Lecons = cours.Lecons.Select(l => MapLecon(l, null, null)).ToList(),
         };
-    }
 
     public static Exercise MapExercices(Exercices exercices)
     {
