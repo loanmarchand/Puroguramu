@@ -25,8 +25,6 @@ public class HomeCours : PageModel
     public string TitreCours { get; set; }
 
     public List<Lecon> Lecons { get; set; }
-    public int ExercicesFait { get; set; }
-    public int ExercicesTotal { get; set; }
 
 
     public async Task OnGetAsync()

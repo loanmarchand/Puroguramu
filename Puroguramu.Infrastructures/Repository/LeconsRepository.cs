@@ -2,6 +2,7 @@
 using Puroguramu.Domains;
 using Puroguramu.Domains.Repository;
 using Puroguramu.Infrastructures.data;
+using Puroguramu.Infrastructures.dto;
 using Puroguramu.Infrastructures.Mapper;
 
 namespace Puroguramu.Infrastructures.Repository;
@@ -81,5 +82,16 @@ public class LeconsRepository : ILeconsRepository
         }
 
         return lecon.ExercicesList.FirstOrDefault(e => e.Titre == titre)?.IdExercice ?? string.Empty;
+    }
+
+    public Task CreateLecon(string titreCours, string inputTitre)
+    {
+        var lecon = new Lecons
+        {
+            Titre = inputTitre,
+            Cours = _context.Cours.FirstOrDefault(c => c.Titre == titreCours)
+        };
+        _context.Lecons.Add(lecon);
+        return _context.SaveChangesAsync();
     }
 }

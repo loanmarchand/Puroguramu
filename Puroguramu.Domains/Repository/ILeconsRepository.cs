@@ -8,4 +8,5 @@ public interface ILeconsRepository
 
     Exercise GetExercice(string? leconTitre, string? titreExo);
     string GetExerciceId(string leconTitre, string titre);
+    Task CreateLecon(string titreCours, string inputTitre);
 }
