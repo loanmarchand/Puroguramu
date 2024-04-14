@@ -33,7 +33,7 @@ public class IndexModel : PageModel
         if (_signInManager.IsSignedIn(User))
         {
             // Redirige vers la page HomePage si l'utilisateur est déjà connecté
-            return RedirectToPage("./HomePage");
+            return RedirectToPage("./CoursPage");
         }
 
         CountEtudiant = _signInManager.UserManager.Users.Count();

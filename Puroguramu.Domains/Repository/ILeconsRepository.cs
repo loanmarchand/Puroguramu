@@ -12,4 +12,5 @@ public interface ILeconsRepository
 
     IEnumerable<Lecon> GetLeconsForCours(string titreCours, string userId);
 
+    Task<(string, string)> GetNextExerciceAsync(string titreCours, string userId);
 }

@@ -127,4 +127,9 @@ public class LeconsRepository : ILeconsRepository
 
         return lecona;
     }
+
+    public Task<(string, string)> GetNextExerciceAsync(string titreCours, string userId)
+    {
+        //TODO: Implement this method
+    }
 }

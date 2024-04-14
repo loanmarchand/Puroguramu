@@ -1,5 +1,5 @@
 @page
-@model Puroguramu.App.Pages.HomePage
+@model Puroguramu.App.Pages.CoursPage
 @{
     Layout = "_Layout";
     ViewData["Title"] = "Accueil";
@@ -11,7 +11,7 @@
     <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
         @foreach (var cours in Model.Cours)
         {
-            <a href="@Url.Page("/HomeCours", new { titreCours = cours.Titre })" class="block overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 ease-in-out flex flex-col">
+            <a href="@Url.Page("/DashBoard", new { titreCours = cours.Titre })" class="block overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 ease-in-out flex flex-col">
                 <div class="flex-shrink-0">
                     <img src="@cours.ImageUrl" alt="Image du cours" class="w-full object-cover max-h-48" />
                 </div>
@@ -22,10 +22,5 @@
         }
 
     </div>
-
-    <!-- Boutons -->
-    <div class="flex justify-between items-center mt-8">
-        <button class="px-6 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 transition">Prochain Exercice</button>
-        <button class="px-6 py-2 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 transition">Reprendre Exercices</button>
-    </div>
+    
 </div>

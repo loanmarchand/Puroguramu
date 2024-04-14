@@ -9,13 +9,13 @@ using Puroguramu.Infrastructures.dto;
 
 namespace Puroguramu.App.Pages;
 
-public class HomePage : PageModel
+public class CoursPage : PageModel
 {
     private readonly ICoursRepository _coursRepository;
     private readonly SignInManager<Utilisateurs> _signInManager; // Ajoutez cette ligne
 
     // Injectez SignInManager dans le constructeur
-    public HomePage(ICoursRepository coursRepository, SignInManager<Utilisateurs> signInManager)
+    public CoursPage(ICoursRepository coursRepository, SignInManager<Utilisateurs> signInManager)
     {
         _coursRepository = coursRepository;
         _signInManager = signInManager;
