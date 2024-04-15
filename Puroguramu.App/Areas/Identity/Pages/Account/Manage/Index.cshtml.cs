@@ -71,6 +71,7 @@ namespace Puroguramu.App.Areas.Identity.Pages.Account.Manage
             public string Groupe { get; set; }
 
             [Display(Name = "Image de profil")]
+            [ValidImage]
             public IFormFile ProfilePicture { get; set; }
 
             public string CurrentProfilePictureBase64 { get; set; }
@@ -127,11 +128,18 @@ namespace Puroguramu.App.Areas.Identity.Pages.Account.Manage
 
             if (Input.ProfilePicture != null)
             {
-                using (var memoryStream = new MemoryStream())
-                {
-                    await Input.ProfilePicture.CopyToAsync(memoryStream);
-                    user.ProfilePicture = memoryStream.ToArray();
-                }
+                //if (!Input.ProfilePicture.ContentType.StartsWith("image/"))
+                //{
+                    //ModelState.AddModelError("Input.ProfilePicture", "Le fichier déposé n'est pas une image");
+                //}else
+                //{
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await Input.ProfilePicture.CopyToAsync(memoryStream);
+                        user.ProfilePicture = memoryStream.ToArray();
+                    }
+                //}
+
             }
 
             user.Prenom = Input.Prenom;
@@ -150,5 +158,72 @@ namespace Puroguramu.App.Areas.Identity.Pages.Account.Manage
             return RedirectToPage();
         }
 
+        public class ValidImageAttribute : ValidationAttribute
+        {
+            public bool IsImageValid(IFormFile file)
+            {
+                // Vérification si le fichier existe et n'est pas vide
+                if (file == null || file.Length == 0)
+                {
+                    return false;
+                }
+
+                // Vérification du type MIME pour s'assurer qu'il s'agit d'une image
+                if (!file.ContentType.StartsWith("image/"))
+                {
+                    return false;
+                }
+
+                // Vérification du numéro magique pour confirmer qu'il s'agit d'une image
+                using (var stream = new MemoryStream())
+                {
+                    file.CopyTo(stream);
+                    byte[] fileBytes = stream.ToArray();
+
+                    // Vérification du numéro magique pour les formats d'image courants
+                    if (!IsImageFile(fileBytes))
+                    {
+                        return false;
+                    }
+                }
+
+                // Si toutes les vérifications passent, le fichier est considéré comme une image valide
+                return true;
+            }
+
+            private bool IsImageFile(byte[] fileBytes)
+            {
+                // Vérification du numéro magique pour les formats d'image courants
+                // Vous pouvez ajuster ces valeurs pour inclure d'autres formats d'image si nécessaire
+                string[] imageMagicNumbers =
+                {
+                    "FFD8FFE0", // JPEG
+                    "89504E47", // PNG
+                    "47494638", // GIF
+                };
+
+                // Lire les premiers octets du fichier pour obtenir le numéro magique
+                string fileMagicNumber = BitConverter.ToString(fileBytes.Take(4).ToArray()).Replace("-", string.Empty);
+
+                // Vérifier si le numéro magique correspond à l'un des formats d'image
+                return imageMagicNumbers.Contains(fileMagicNumber);
+            }
+
+            protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
+            {
+                 var asIFormFile = value as IFormFile;
+                 if (asIFormFile == null)
+                 {
+                     return new ValidationResult("Un fichier image est attendu");
+                 }
+
+                 if (!IsImageValid(asIFormFile))
+                 {
+                     return new ValidationResult("Un fichier image valide est attendu");
+                 }
+
+                 return ValidationResult.Success;
+            }
+        }
     }
 }

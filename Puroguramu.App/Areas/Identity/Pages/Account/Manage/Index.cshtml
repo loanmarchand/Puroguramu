@@ -31,7 +31,7 @@
                    {
                        <img id="profile-picture-preview" src="~/images/profilepicture.jpg" class="h-32 w-32 rounded-full mx-auto my-4" alt="Profil"/>
                    }
-                   <label asp-for="Input.ProfilePicture" class="block text-sm font-medium text-gray-700">Nouvelle image de profil</label>
+                   <label asp-for="Input.ProfilePicture" class="block text-sm font-medium text-gray-700">Nouvelle image de profil (.jpg .png .gif)</label>
                    <input asp-for="Input.ProfilePicture" type="file" class="mt-2 w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" onchange="previewProfilePicture(this)" />
                    <span asp-validation-for="Input.ProfilePicture" class="text-red-500 text-xs"></span>
                </div>
