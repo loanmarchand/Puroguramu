@@ -65,11 +65,14 @@ namespace Puroguramu.App.Areas.Identity.Pages.Account
         /// </summary>
         public class InputModel
         {
+            private const string EmailRegexPattern = @"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$";
+            private const string MatriculeRegexPattern = @"^[a-zA-Z][0-9]{6}$";
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [Required]
+            [RegularExpression("(" + EmailRegexPattern + ")|(" + MatriculeRegexPattern + ")", ErrorMessage = "Ce champ doit contenir un email valide, ou un matricule valide")]
             [Display(Name = "Email or Matricule")]
             public string EmailOrMatricule { get; set; }
 

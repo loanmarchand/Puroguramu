@@ -72,12 +72,15 @@ namespace Puroguramu.App.Areas.Identity.Pages.Account
         /// </summary>
         public class InputModel
         {
+            private const string EmailRegexPattern = @"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$";
+            private const string MatriculeRegexPattern = @"^[a-zA-Z][0-9]{6}$";
+
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [Required]
-            [EmailAddress]
+            [RegularExpression(EmailRegexPattern, ErrorMessage = "Le champ Email n'est pas une adresse e-mail valide.")]
             [Display(Name = "Email")]
             public string Email { get; set; }
 
@@ -101,7 +104,7 @@ namespace Puroguramu.App.Areas.Identity.Pages.Account
             public string ConfirmPassword { get; set; }
 
             [Required(ErrorMessage = "Le champ Matricule est requis")]
-            [RegularExpression(@"^[a-zA-Z][0-9]{6}$", ErrorMessage = "Le matricule doit être une chaîne de 7 caractères commençant par une lettre suivie de chiffres")]
+            [RegularExpression(MatriculeRegexPattern, ErrorMessage = "Le matricule doit être une chaîne de 7 caractères commençant par une lettre suivie de chiffres")]
             public string Matricule { get; set; }
 
             [Required(ErrorMessage = "Le champ nom est requis")]
