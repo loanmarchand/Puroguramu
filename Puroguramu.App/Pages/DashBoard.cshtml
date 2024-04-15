@@ -1,4 +1,5 @@
 @page "/DashBoard/{TitreCours}"
+@using Puroguramu.Infrastructures.dto
 @model Puroguramu.App.Pages.DashBoard
 
 @{
@@ -7,45 +8,61 @@
 }
 
 <div class="container mx-auto px-4 py-8">
-    <h1 class="text-2xl font-bold text-center mb-6">Tableau de bord</h1>
+    <h1 class="text-2xl font-bold text-center mb-6">Tableau de bord de @Model.TitreCours</h1>
 
     @if (Model.Lecons.Any())
     {
         <div class="space-y-4">
             @foreach (var lecon in Model.Lecons)
             {
-                <a href="@Url.Page("/Lecons", new { LeconTitre = lecon.Titre })">
                 <div class="p-4 bg-white rounded-lg shadow-lg flex justify-between items-center mb-6 hover:bg-gray-100">
                     <div>
                         <h2 class="text-xl font-semibold">@lecon.Titre</h2>
                     </div>
-                    <div class="text-sm font-medium">
-                        @lecon.ExercicesFait / @lecon.ExercicesTotal Exercices réussis
+                    <div class="flex items-center">
+                        <div class="text-sm font-medium mr-2">
+                            @lecon.ExercicesFait / @lecon.ExercicesTotal Exercices réussis
+                        </div>
+                        @if ((Role)ViewData["Role"] == Role.Teacher)
+                        {
+                            <a href="@Url.Page("/AddLecons", new { LeconTitre = lecon.Titre })" class="text-blue-500 hover:text-blue-700 mr-2">
+                                <i class="fas fa-plus"></i>
+                            </a>
+                            <a href="@Url.Page("/ChangeVisibility", new { LeconTitre = lecon.Titre })" class="text-blue-500 hover:text-blue-700 mr-2">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="@Url.Page("/EditLecon", new { LeconTitre = lecon.Titre })" class="text-green-500 hover:text-green-700 mr-2">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="@Url.Page("/DeleteLecon", new { LeconTitre = lecon.Titre })" class="text-red-500 hover:text-red-700">
+                                <i class="fas fa-trash-alt"></i>
+                            </a>
+                        }
                     </div>
                 </div>
-                </a>
             }
-            
-
         </div>
     }
     else
     {
         <p class="text-center text-gray-600">Aucune leçon trouvée pour ce cours.</p>
     }
-    
-    
-    <div class="flex justify-between items-center mt-8">
-        <form method="post" asp-page-handler="ProchainExercice">
-            <button type="submit" class="px-6 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-150 ease-in-out">Prochain Exercice</button>
-        </form>
-        <form method="post" asp-page-handler="ReprendreExercices">
-            <button type="submit" class="px-6 py-2 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-700 transition duration-150 ease-in-out">Reprendre Exercices</button>
-        </form>
-    </div>
 
-    <!-- Boutons, comme sur la page des cours -->
-    @* <div class="flex justify-between items-center mt-8"> *@
-    @*     <!-- Afficher pour les profs<a href="@Url.Page("/CreateLecons", new {TitreCours = Model.TitreCours})" class="px-6 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-150 ease-in-out">Créer une nouvelle lecon</a>--> *@
-    @* </div> *@
+    @if ((Role)ViewData["Role"] == Role.Teacher)
+    {
+        <div class="flex justify-center mt-8">
+            <a href="@Url.Page("/CreateLecons", new { TitreCours = Model.TitreCours })" class="px-6 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-150 ease-in-out">Créer une nouvelle leçon</a>
+        </div>
+    }
+    else
+    {
+        <div class="flex justify-between items-center mt-8">
+            <form method="post" asp-page-handler="ProchainExercice">
+                <button type="submit" class="px-6 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-150 ease-in-out">Prochain Exercice</button>
+            </form>
+            <form method="post" asp-page-handler="ReprendreExercices">
+                <button type="submit" class="px-6 py-2 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-700 transition duration-150 ease-in-out">Reprendre Exercices</button>
+            </form>
+        </div>
+    }
 </div>

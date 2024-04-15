@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Puroguramu.Domains;
 using Puroguramu.Domains.Repository;
 using Puroguramu.Infrastructures.dto;
-using Status = Puroguramu.Domains.Status;
 
 namespace Puroguramu.App.Pages;
 
@@ -19,8 +18,7 @@ public class DashBoard : PageModel
         _userManager = userManager;
     }
 
-    [BindProperty(SupportsGet = true)]
-    public string TitreCours { get; set; }
+    [BindProperty(SupportsGet = true)] public string TitreCours { get; set; }
 
     public List<Lecon> Lecons { get; set; }
 
@@ -28,7 +26,8 @@ public class DashBoard : PageModel
     public async Task OnGetAsync()
     {
         var user = await _userManager.GetUserAsync(User);
-        Lecons = _leconsRepository.GetLeconsForCours(TitreCours,user.Id).ToList();
+        ViewData["Role"] = user.Role;
+        Lecons = _leconsRepository.GetLeconsForCours(TitreCours, user.Id).ToList();
     }
 
     public async Task<IActionResult> OnPostProchainExerciceAsync()
@@ -43,8 +42,7 @@ public class DashBoard : PageModel
             return RedirectToPage();
         }
 
-        return RedirectToPage("/Exercice", new { Titre = prochainExercice.Item1, LeconTitre = prochainExercice.Item2});
-
+        return RedirectToPage("/Exercice", new { Titre = prochainExercice.Item1, LeconTitre = prochainExercice.Item2 });
     }
 
     public async Task<IActionResult> OnPostReprendreExercicesAsync()
@@ -59,6 +57,6 @@ public class DashBoard : PageModel
             return RedirectToPage();
         }
 
-        return RedirectToPage("/Exercice", new { Titre = prochainExercice.Item1, LeconTitre = prochainExercice.Item2});
+        return RedirectToPage("/Exercice", new { Titre = prochainExercice.Item1, LeconTitre = prochainExercice.Item2 });
     }
 }
