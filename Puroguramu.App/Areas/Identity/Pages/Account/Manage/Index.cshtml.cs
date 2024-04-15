@@ -128,18 +128,11 @@ namespace Puroguramu.App.Areas.Identity.Pages.Account.Manage
 
             if (Input.ProfilePicture != null)
             {
-                //if (!Input.ProfilePicture.ContentType.StartsWith("image/"))
-                //{
-                    //ModelState.AddModelError("Input.ProfilePicture", "Le fichier déposé n'est pas une image");
-                //}else
-                //{
-                    using (var memoryStream = new MemoryStream())
-                    {
-                        await Input.ProfilePicture.CopyToAsync(memoryStream);
-                        user.ProfilePicture = memoryStream.ToArray();
-                    }
-                //}
-
+                using (var memoryStream = new MemoryStream())
+                {
+                    await Input.ProfilePicture.CopyToAsync(memoryStream);
+                    user.ProfilePicture = memoryStream.ToArray();
+                }
             }
 
             user.Prenom = Input.Prenom;
@@ -197,13 +190,13 @@ namespace Puroguramu.App.Areas.Identity.Pages.Account.Manage
                 // Vous pouvez ajuster ces valeurs pour inclure d'autres formats d'image si nécessaire
                 string[] imageMagicNumbers =
                 {
-                    "FFD8FFE0", // JPEG
-                    "89504E47", // PNG
-                    "47494638", // GIF
+                    "FFD8FF", // JPEG
+                    "89504E", // PNG
+                    "474946", // GIF
                 };
 
                 // Lire les premiers octets du fichier pour obtenir le numéro magique
-                string fileMagicNumber = BitConverter.ToString(fileBytes.Take(4).ToArray()).Replace("-", string.Empty);
+                string fileMagicNumber = BitConverter.ToString(fileBytes.Take(3).ToArray()).Replace("-", string.Empty);
 
                 // Vérifier si le numéro magique correspond à l'un des formats d'image
                 return imageMagicNumbers.Contains(fileMagicNumber);
@@ -214,7 +207,7 @@ namespace Puroguramu.App.Areas.Identity.Pages.Account.Manage
                  var asIFormFile = value as IFormFile;
                  if (asIFormFile == null)
                  {
-                     return new ValidationResult("Un fichier image est attendu");
+                     return ValidationResult.Success;
                  }
 
                  if (!IsImageValid(asIFormFile))
