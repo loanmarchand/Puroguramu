@@ -69,4 +69,20 @@ public class StatutExerciceRepository : IStatutExerciceRepository
         _context.StatutExercices.Update(statut);
         return _context.SaveChangesAsync();
     }
+
+    public Task UpdateSolutionTempo(string getExerciceId, string getUserId, string proposal)
+    {
+        var statut = _context.StatutExercices
+            .Include(s => s.Exercice)
+            .FirstOrDefault(s => s.Exercice.IdExercice == getExerciceId && s.Etudiant.Id == getUserId)!;
+
+        statut.SolutionTempo = proposal;
+        _context.StatutExercices.Update(statut);
+        return _context.SaveChangesAsync();
+    }
+
+    public Task<string?> GetSolutionTempo(string getExerciceId, string getUserId) =>
+        Task.FromResult(_context.StatutExercices
+            .Include(s => s.Exercice)
+            .FirstOrDefault(s => s.Exercice.IdExercice == getExerciceId && s.Etudiant.Id == getUserId)?.SolutionTempo);
 }

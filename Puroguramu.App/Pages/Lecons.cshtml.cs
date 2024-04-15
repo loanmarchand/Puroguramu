@@ -24,5 +24,5 @@ public class Lecons : PageModel
     [BindProperty(SupportsGet = true)]
     public string? LeconTitre { get; set; }
 
-    public Lecon Lecon { get; set; }
+    public Lecon? Lecon { get; set; }
 }

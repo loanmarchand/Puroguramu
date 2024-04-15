@@ -14,4 +14,10 @@
 .scrollmargin2 {
     height: 180px;
 }
+.disabled-editor {
+    pointer-events: none; /* Désactive les interactions de la souris */
+    opacity: 0.5; /* Rend le div visiblement désactivé */
+    user-select: none; /* Empêche la sélection du texte */
+}
+
 

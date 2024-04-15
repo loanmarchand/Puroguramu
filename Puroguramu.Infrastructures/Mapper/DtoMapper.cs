@@ -40,7 +40,7 @@ public class DtoMapper
         };
     }
 
-    public static Lecon MapLeconWithStatuts(Lecons lecons, IEnumerable<(Exercices exercice, dto.Status? statut)> exercicesStatuts)
+    public static Lecon? MapLeconWithStatuts(Lecons lecons, IEnumerable<(Exercices exercice, dto.Status? statut)> exercicesStatuts)
     {
         var exercices = exercicesStatuts.Select(es => MapExercicesWithStatut(es.exercice, es.statut)).ToList();
 

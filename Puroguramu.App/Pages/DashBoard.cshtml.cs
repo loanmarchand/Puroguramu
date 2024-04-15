@@ -36,7 +36,7 @@ public class DashBoard : PageModel
         var user = _userManager.GetUserAsync(User).Result;
         var prochainExercice = await _leconsRepository.GetNextExerciceAsync(TitreCours, user.Id);
         Console.WriteLine(prochainExercice);
-        if (prochainExercice.Item1 == null || prochainExercice.Item2 == null || prochainExercice.Item1 == "" || prochainExercice.Item2 == "")
+        if (prochainExercice.Item1 == string.Empty || prochainExercice.Item2 == string.Empty)
         {
             //Afficher un pop-up pas d'exercice disponible
 
@@ -52,6 +52,13 @@ public class DashBoard : PageModel
         // Logique pour reprendre les exercices
         var user = _userManager.GetUserAsync(User).Result;
         var prochainExercice = await _leconsRepository.GetActualExercicesAsync(TitreCours, user.Id);
-        return await Task.FromResult<IActionResult>(RedirectToPage("/Exercice", new { TitreCours = TitreCours }));
+        if (prochainExercice.Item1 == string.Empty || prochainExercice.Item2 == string.Empty)
+        {
+            //Afficher un pop-up pas d'exercice disponible
+
+            return RedirectToPage();
+        }
+
+        return RedirectToPage("/Exercice", new { Titre = prochainExercice.Item1, LeconTitre = prochainExercice.Item2});
     }
 }

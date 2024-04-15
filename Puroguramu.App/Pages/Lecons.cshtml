@@ -19,10 +19,10 @@
             {
                 <div class="p-4 bg-white rounded-lg shadow-lg flex justify-between items-center">
                     <div class="flex items-center">
-                        <a href="@Url.Page("/Exercice/Solution", new { Titre = exo.Titre, LeconTitre = Model.LeconTitre })" class="mr-4">
-                            <img src="~/images/loupe.png" alt="Voir Solution" class="h-6 w-6"> <!-- Remplacer ~/images/loupe-icon.png par le chemin réel de l'icône -->
+                        <a href="@Url.Page("/Exercice", new { Titre = exo.Titre, LeconTitre = Model.LeconTitre, ShowSolution = 1 })" class="mr-4">
+                            <img src="~/images/loupe.png" alt="Voir Solution" class="h-6 w-6">
                         </a>
-                        <a href="@Url.Page("/Exercice", new { Titre = exo.Titre, LeconTitre = Model.LeconTitre })">
+                        <a href="@Url.Page("/Exercice", new { Titre = exo.Titre, LeconTitre = Model.LeconTitre , ShowSolution = exo.etat != Status.Failed ? 0 : 1 })">
                         <div>
                             <h2 class="text-xl font-semibold">@exo.Titre</h2>
                             <p class="text-sm">Difficulté : @exo.Difficulte</p>
@@ -57,9 +57,7 @@
     }
 
     <!-- Exemple de boutons -->
-    <div class="flex justify-between items-center mt-8">
-        <button class="px-6 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-150 ease-in-out">Exercice Suivant</button>
-        <a href="@Url.Page("/CreateExercices")" class="px-6 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-150 ease-in-out">Créer un nouvel exercice</a>
-        <button class="px-6 py-2 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-700 transition duration-150 ease-in-out">Revoir Exercices</button>
-    </div>
+    @* <div class="flex justify-between items-center mt-8"> *@
+    @*     <a href="@Url.Page("/CreateExercices")" class="px-6 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-150 ease-in-out">Créer un nouvel exercice</a> *@
+    @* </div> *@
 </div>

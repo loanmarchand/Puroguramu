@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Puroguramu.Infrastructures.dto;
 
@@ -22,12 +23,14 @@ namespace Puroguramu.App.Areas.Identity.Pages.Account
     public class LoginModel : PageModel
     {
         private readonly SignInManager<Utilisateurs> _signInManager;
+        private readonly UserManager<Utilisateurs> _userManager;
         private readonly ILogger<LoginModel> _logger;
 
-        public LoginModel(SignInManager<Utilisateurs> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(SignInManager<Utilisateurs> signInManager, ILogger<LoginModel> logger, UserManager<Utilisateurs> userManager)
         {
             _signInManager = signInManager;
             _logger = logger;
+            _userManager = userManager;
         }
 
         /// <summary>
@@ -67,8 +70,8 @@ namespace Puroguramu.App.Areas.Identity.Pages.Account
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [Required]
-            [EmailAddress]
-            public string Email { get; set; }
+            [Display(Name = "Email or Matricule")]
+            public string EmailOrMatricule { get; set; }
 
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -111,9 +114,19 @@ namespace Puroguramu.App.Areas.Identity.Pages.Account
 
             if (ModelState.IsValid)
             {
+                var userName = Input.EmailOrMatricule;
+                if (!Input.EmailOrMatricule.Contains("@"))
+                {
+                    var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Matricule == Input.EmailOrMatricule);
+                    if (user != null)
+                    {
+                        userName = user.Email;
+                    }
+                }
+
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+                var result = await _signInManager.PasswordSignInAsync(userName, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");

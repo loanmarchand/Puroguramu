@@ -14,7 +14,7 @@ public class Exercise
 
     public string Difficulte { get; set; }
 
-    public Status etat;
+    public Status etat { get; set; }
 
     private readonly string _template = @"// code-insertion-point
 

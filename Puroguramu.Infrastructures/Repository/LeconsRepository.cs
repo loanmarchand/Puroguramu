@@ -20,20 +20,20 @@ public class LeconsRepository : ILeconsRepository
         return lecons.Select(l => DtoMapper.MapLecon(l, null, null)).ToList();
     }
 
-    public Lecon GetLecon(string idLecons, string userId)
+    public Lecon? GetLecon(string idLecons, string userId)
     {
         var leconQuery = _context.Lecons
             .Where(l => l.Titre == idLecons)
             .Select(l => new
             {
                 Lecon = l,
-                Exercices = l.ExercicesList
+                Exercices = l.ExercicesList!
                     .Where(e => e.EstVisible)
                     .Select(e => new
                     {
                         Exercice = e,
-                        // Utilisation de ?? pour définir Status.NotStarted comme valeur par défaut
 
+                        // Utilisation de ?? pour définir Status.NotStarted comme valeur par défaut
                         Statut = (dto.Status?)_context.StatutExercices
                             .Where(se => se.Exercice.IdExercice == e.IdExercice && se.Etudiant.Id == userId)
                             .Select(se => se.Statut)
@@ -43,7 +43,10 @@ public class LeconsRepository : ILeconsRepository
             })
             .FirstOrDefault();
 
-        if (leconQuery == null) return null;
+        if (leconQuery == null)
+        {
+            return null;
+        }
 
         // Assurez-vous que le type correspond exactement à ce que s'attend MapLeconWithStatuts
         var exercicesStatuts = leconQuery.Exercices
@@ -53,7 +56,6 @@ public class LeconsRepository : ILeconsRepository
         // Utilisation du nouveau mapper avec gestion des statuts
         return DtoMapper.MapLeconWithStatuts(leconQuery.Lecon, exercicesStatuts);
     }
-
 
     public Exercise GetExercice(string? leconTitre, string? titreExo)
     {
@@ -65,7 +67,7 @@ public class LeconsRepository : ILeconsRepository
             return new Exercise();
         }
 
-        return DtoMapper.MapExercices(lecon.ExercicesList.FirstOrDefault(e => e.Titre == titreExo)!);
+        return DtoMapper.MapExercices(lecon.ExercicesList!.FirstOrDefault(e => e.Titre == titreExo)!);
     }
 
     public string GetExerciceId(string leconTitre, string titre)
@@ -78,7 +80,7 @@ public class LeconsRepository : ILeconsRepository
             return string.Empty;
         }
 
-        return lecon.ExercicesList.FirstOrDefault(e => e.Titre == titre)?.IdExercice ?? string.Empty;
+        return lecon.ExercicesList!.FirstOrDefault(e => e.Titre == titre)?.IdExercice ?? string.Empty;
     }
 
     public Task CreateLecon(string titreCours, string inputTitre)
@@ -90,7 +92,7 @@ public class LeconsRepository : ILeconsRepository
             return Task.CompletedTask;
         }
 
-        cours.Lecons.Add(lecon);
+        cours.Lecons?.Add(lecon);
         _context.SaveChanges();
         return Task.CompletedTask;
     }
@@ -128,63 +130,95 @@ public class LeconsRepository : ILeconsRepository
         return lecona;
     }
 
-    public Task<(string, string)> GetNextExerciceAsync(string titreCours, string userId)
+    public async Task<(string, string)> GetNextExerciceAsync(string titreCours, string userId)
     {
-        var statutExoList = _context.StatutExercices
-            .Include(se => se.Exercice)
-            .Where(se => se.Etudiant.Id == userId && se.Statut == dto.Status.Passed)
-            .Select(se => se.Exercice)
+        // Charger tous les exercices pour un cours donné
+        var lecons = await _context.Cours
+            .Where(c => c.Titre == titreCours)
+            .SelectMany(c => c.Lecons!).Include(lecons => lecons.ExercicesList)
+            .ToListAsync();
+
+        // Charger les statuts séparément
+        var statuts = await _context.StatutExercices
+            .Where(se => se.Etudiant.Id == userId)
+            .ToListAsync();
+
+        // Corréler les données manuellement
+        var exercices = lecons
+            .SelectMany(l => l.ExercicesList!.Select(e => new { LeconTitre = l.Titre, Exercice = e }))
             .ToList();
 
-        var lecon = _context.Lecons
-            .Include(l => l.ExercicesList)
-            .FirstOrDefault(l => l.Titre == titreCours);
+        // Trouver les exercices avec statuts
+        var exercicesAvecStatuts = from e in exercices
+            join s in statuts on e.Exercice.IdExercice equals s.Exercice.IdExercice into es
+            from s in es.DefaultIfEmpty()
+            select new
+            {
+                e.LeconTitre,
+                e.Exercice,
+                Statut = s?.Statut ?? dto.Status.NotStarted,
+            };
 
-        if (lecon == null)
+        // Appliquer la logique de sélection du prochain exercice
+        var avecStatuts = exercicesAvecStatuts.ToList();
+        var lastFinished = avecStatuts.FirstOrDefault(e => e.Statut == dto.Status.Passed);
+        if (lastFinished != null)
         {
-            return Task.FromResult<(string, string)>((string.Empty, string.Empty));
+            var next = exercices.SkipWhile(e => e.Exercice.IdExercice != lastFinished.Exercice.IdExercice).Skip(1).FirstOrDefault();
+            if (next != null)
+            {
+                return (next.Exercice.Titre, next.LeconTitre);
+            }
         }
 
-        var exercices = lecon.ExercicesList
-            .Where(e => !statutExoList.Contains(e))
-            .ToList();
-
-        if (exercices.Count == 0)
+        var firstStarted = avecStatuts.FirstOrDefault(e => e.Statut == dto.Status.Started);
+        if (firstStarted != null)
         {
-            return Task.FromResult<(string, string)>((string.Empty, string.Empty));
+            return (firstStarted.Exercice.Titre, firstStarted.LeconTitre);
         }
 
-        var exercice = exercices.First();
-        return Task.FromResult<(string, string)>((exercice.Titre, lecon.Titre));
+        var firstExercise = exercices.FirstOrDefault();
+        return firstExercise != null ? (firstExercise.Exercice.Titre, firstExercise.LeconTitre) : (string.Empty, string.Empty);
     }
 
-    public Task<(string, string)> GetActualExercicesAsync(string titreCours, string userId)
+    public async Task<(string, string)> GetActualExercicesAsync(string titreCours, string userId)
     {
-        var statutExoList = _context.StatutExercices
+        // Charger tous les exercices pour un cours donné
+        var lecons = await _context.Cours
+            .Where(c => c.Titre == titreCours)
+            .Include(c => c.Lecons)!
+            .ThenInclude(l => l.ExercicesList)
+            .ToListAsync();
+
+        // Extraire tous les ID des exercices pour une vérification ultérieure
+        var exercicesIds = lecons.SelectMany(c => c.Lecons!)
+            .SelectMany(l => l.ExercicesList!)
+            .Select(e => e.IdExercice)
+            .ToList();
+
+        // Charger les statuts des exercices pour cet utilisateur qui sont dans la liste des IDs chargés
+        var statuts = await _context.StatutExercices
+            .Where(se => se.Etudiant.Id == userId && exercicesIds.Contains(se.Exercice.IdExercice))
             .Include(se => se.Exercice)
-            .Where(se => se.Etudiant.Id == userId && se.Statut == dto.Status.Started)
-            .Select(se => se.Exercice)
-            .ToList();
+            .ToListAsync();
 
-        var lecon = _context.Lecons
-            .Include(l => l.ExercicesList)
-            .FirstOrDefault(l => l.Titre == titreCours);
+        // Recherche du dernier exercice commencé par l'utilisateur
+        var dernierExerciceCommence = statuts
+            .Where(se => se.Statut == dto.Status.Started)
+            .OrderByDescending(se => se.Exercice.IdExercice)
+            .Select(se => new
+            {
+                ExerciceId = se.Exercice.IdExercice,
+                ExerciceTitre = se.Exercice.Titre,
+                LeconTitre = lecons.SelectMany(c => c.Lecons!)
+                    .FirstOrDefault(l => l.ExercicesList!.Any(e => e.IdExercice == se.Exercice.IdExercice))
+                    ?.Titre,
+            })
+            .FirstOrDefault();
 
-        if (lecon == null)
-        {
-            return Task.FromResult<(string, string)>((string.Empty, string.Empty));
-        }
-
-        var exercices = lecon.ExercicesList
-            .Where(e => statutExoList.Contains(e))
-            .ToList();
-
-        if (exercices.Count == 0)
-        {
-            return Task.FromResult<(string, string)>((string.Empty, string.Empty));
-        }
-
-        var exercice = exercices.First();
-        return Task.FromResult<(string, string)>((exercice.Titre, lecon.Titre));
+        return (dernierExerciceCommence != null
+            ? (dernierExerciceCommence.ExerciceTitre, dernierExerciceCommence.LeconTitre)
+            : (string.Empty, string.Empty))!;
     }
+
 }

@@ -1,4 +1,4 @@
-@page "/Exercice/{Titre}/{LeconTitre}"
+@page "/Exercice/{Titre}/{LeconTitre}/{ShowSolution:int?}"
 @using Puroguramu.App.Pages
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @model Puroguramu.App.Pages.Exercice
@@ -18,7 +18,7 @@
             </div>
             <div>
                 <div>
-                    <div id="ProposalEditor">@Model.Proposal</div>
+                    <div id="ProposalEditor" class="@(Model.ShowSolution is 1 ? "disabled-editor" : "")">@Model.Proposal</div>
                     <div>
                         <button>Exécuter</button>
                     </div>
