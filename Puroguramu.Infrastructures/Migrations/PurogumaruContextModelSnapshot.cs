@@ -382,6 +382,28 @@ namespace Puroguramu.Infrastructures.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "af8ce97e-8a62-4e83-91b6-9ebcf2072041",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "759e18e6-aade-4879-8b6f-ac8d6aa5af55",
+                            Email = "admin@example.com",
+                            EmailConfirmed = false,
+                            Groupe = "0",
+                            LockoutEnabled = false,
+                            Matricule = "P200000",
+                            Nom = "admin",
+                            NormalizedEmail = "ADMIN@EXAMPLE.COM",
+                            NormalizedUserName = "ADMIN@EXAMPLE.COM",
+                            PasswordHash = "AQAAAAEAACcQAAAAEIHzuv1RHJkaVyKrBGkb+1CI5adSagPWuVj7n/aFt9OEWg+m1y4i3GZwihzkMPRcHg==",
+                            PhoneNumberConfirmed = false,
+                            Prenom = "admin",
+                            SecurityStamp = "0b752d8b-21e6-4532-b6f3-680ec7d9077d",
+                            TwoFactorEnabled = false,
+                            UserName = "admin@example.com"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
