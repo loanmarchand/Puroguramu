@@ -38,7 +38,7 @@ public class StatutExerciceRepository : IStatutExerciceRepository
 
     public Task CreateStatut(string getExerciceId, string getUserId)
     {
-        dto.StatutExercice statut = new dto.StatutExercice
+        var statut = new dto.StatutExercice
         {
             IdStatutExercice = default(Guid).ToString(),
             Exercice = _context.Exercices.Find(getExerciceId),

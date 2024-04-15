@@ -130,6 +130,61 @@ public class LeconsRepository : ILeconsRepository
 
     public Task<(string, string)> GetNextExerciceAsync(string titreCours, string userId)
     {
-        //TODO: Implement this method
+        var statutExoList = _context.StatutExercices
+            .Include(se => se.Exercice)
+            .Where(se => se.Etudiant.Id == userId && se.Statut == dto.Status.Passed)
+            .Select(se => se.Exercice)
+            .ToList();
+
+        var lecon = _context.Lecons
+            .Include(l => l.ExercicesList)
+            .FirstOrDefault(l => l.Titre == titreCours);
+
+        if (lecon == null)
+        {
+            return Task.FromResult<(string, string)>((string.Empty, string.Empty));
+        }
+
+        var exercices = lecon.ExercicesList
+            .Where(e => !statutExoList.Contains(e))
+            .ToList();
+
+        if (exercices.Count == 0)
+        {
+            return Task.FromResult<(string, string)>((string.Empty, string.Empty));
+        }
+
+        var exercice = exercices.First();
+        return Task.FromResult<(string, string)>((exercice.Titre, lecon.Titre));
+    }
+
+    public Task<(string, string)> GetActualExercicesAsync(string titreCours, string userId)
+    {
+        var statutExoList = _context.StatutExercices
+            .Include(se => se.Exercice)
+            .Where(se => se.Etudiant.Id == userId && se.Statut == dto.Status.Started)
+            .Select(se => se.Exercice)
+            .ToList();
+
+        var lecon = _context.Lecons
+            .Include(l => l.ExercicesList)
+            .FirstOrDefault(l => l.Titre == titreCours);
+
+        if (lecon == null)
+        {
+            return Task.FromResult<(string, string)>((string.Empty, string.Empty));
+        }
+
+        var exercices = lecon.ExercicesList
+            .Where(e => statutExoList.Contains(e))
+            .ToList();
+
+        if (exercices.Count == 0)
+        {
+            return Task.FromResult<(string, string)>((string.Empty, string.Empty));
+        }
+
+        var exercice = exercices.First();
+        return Task.FromResult<(string, string)>((exercice.Titre, lecon.Titre));
     }
 }

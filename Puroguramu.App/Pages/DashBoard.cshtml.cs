@@ -31,16 +31,27 @@ public class DashBoard : PageModel
         Lecons = _leconsRepository.GetLeconsForCours(TitreCours,user.Id).ToList();
     }
 
-    public Task<IActionResult> OnPostProchainExerciceAsync()
+    public async Task<IActionResult> OnPostProchainExerciceAsync()
     {
         var user = _userManager.GetUserAsync(User).Result;
-        var prochainExercice = _leconsRepository.GetNextExerciceAsync(TitreCours, user.Id);
-        return Task.FromResult<IActionResult>(RedirectToPage("/Exercice", new { Titre = prochainExercice.Result.Item1, LeconTitre = prochainExercice.Result.Item2}));
+        var prochainExercice = await _leconsRepository.GetNextExerciceAsync(TitreCours, user.Id);
+        Console.WriteLine(prochainExercice);
+        if (prochainExercice.Item1 == null || prochainExercice.Item2 == null || prochainExercice.Item1 == "" || prochainExercice.Item2 == "")
+        {
+            //Afficher un pop-up pas d'exercice disponible
+
+            return RedirectToPage();
+        }
+
+        return RedirectToPage("/Exercice", new { Titre = prochainExercice.Item1, LeconTitre = prochainExercice.Item2});
+
     }
 
-    public Task<IActionResult> OnPostReprendreExercicesAsync()
+    public async Task<IActionResult> OnPostReprendreExercicesAsync()
     {
         // Logique pour reprendre les exercices
-        return Task.FromResult<IActionResult>(RedirectToPage("/ReprendreExercices", new { TitreCours = TitreCours }));
+        var user = _userManager.GetUserAsync(User).Result;
+        var prochainExercice = await _leconsRepository.GetActualExercicesAsync(TitreCours, user.Id);
+        return await Task.FromResult<IActionResult>(RedirectToPage("/Exercice", new { TitreCours = TitreCours }));
     }
 }

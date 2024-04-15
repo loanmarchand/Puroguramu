@@ -13,10 +13,21 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
-builder.Services.AddDbContext<PurogumaruContext>(options =>
+if (builder.Environment.IsDevelopment())
 {
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
-});
+    builder.Services.AddDbContext<PurogumaruContext>(options =>
+    {
+        options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
+    });
+}
+else
+{
+    builder.Services.AddDbContext<PurogumaruContext>(options =>
+    {
+        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+    });
+}
+
 builder.Services.AddDefaultIdentity<Utilisateurs>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddEntityFrameworkStores<PurogumaruContext>();
 
