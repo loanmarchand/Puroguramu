@@ -59,4 +59,16 @@ public class DashBoard : PageModel
 
         return RedirectToPage("/Exercice", new { Titre = prochainExercice.Item1, LeconTitre = prochainExercice.Item2 });
     }
+
+    public async Task<IActionResult> OnPostChangeVisibilityAsync(string leconTitre)
+    {
+        await _leconsRepository.ToggleVisibilityLecon(leconTitre);
+        return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostDeleteLeconAsync(string leconTitre)
+    {
+        await _leconsRepository.DeleteLecon(leconTitre);
+        return RedirectToPage();
+    }
 }

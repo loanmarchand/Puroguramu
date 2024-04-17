@@ -4,6 +4,7 @@ using Puroguramu.Domains.Repository;
 using Puroguramu.Infrastructures.data;
 using Puroguramu.Infrastructures.dto;
 using Puroguramu.Infrastructures.Mapper;
+using Status = Puroguramu.Infrastructures.dto.Status;
 
 namespace Puroguramu.Infrastructures.Repository;
 
@@ -20,7 +21,7 @@ public class LeconsRepository : ILeconsRepository
         return lecons.Select(l => DtoMapper.MapLecon(l, null, null)).ToList();
     }
 
-    public Lecon? GetLecon(string idLecons, string userId)
+    public Lecon? GetLeconWithStatuts(string idLecons, string userId)
     {
         var leconQuery = _context.Lecons
             .Where(l => l.Titre == idLecons)
@@ -34,10 +35,10 @@ public class LeconsRepository : ILeconsRepository
                         Exercice = e,
 
                         // Utilisation de ?? pour définir Status.NotStarted comme valeur par défaut
-                        Statut = (dto.Status?)_context.StatutExercices
+                        Statut = (Status?)_context.StatutExercices
                             .Where(se => se.Exercice.IdExercice == e.IdExercice && se.Etudiant.Id == userId)
                             .Select(se => se.Statut)
-                            .FirstOrDefault() ?? dto.Status.NotStarted,
+                            .FirstOrDefault() ?? Status.NotStarted,
                     })
                     .ToList(),
             })
@@ -50,7 +51,7 @@ public class LeconsRepository : ILeconsRepository
 
         // Assurez-vous que le type correspond exactement à ce que s'attend MapLeconWithStatuts
         var exercicesStatuts = leconQuery.Exercices
-            .Select(e => (e.Exercice, (dto.Status?)e.Statut)) // Le Statut est déjà nullable ici
+            .Select(e => (e.Exercice, (Status?)e.Statut)) // Le Statut est déjà nullable ici
             .ToList();
 
         // Utilisation du nouveau mapper avec gestion des statuts
@@ -122,7 +123,7 @@ public class LeconsRepository : ILeconsRepository
             var nombreExercicesFait = _context.StatutExercices
                 .Count(se => lecon.ExercicesList.Select(e => e.IdExercice).Contains(se.Exercice.IdExercice) &&
                              se.Etudiant.Id == userId &&
-                             se.Statut == dto.Status.Passed);
+                             se.Statut == Status.Passed);
 
             lecona.Add(DtoMapper.MapLecon(lecon, nombreExercicesFait, nombreExercices));
         }
@@ -152,16 +153,11 @@ public class LeconsRepository : ILeconsRepository
         var exercicesAvecStatuts = from e in exercices
             join s in statuts on e.Exercice.IdExercice equals s.Exercice.IdExercice into es
             from s in es.DefaultIfEmpty()
-            select new
-            {
-                e.LeconTitre,
-                e.Exercice,
-                Statut = s?.Statut ?? dto.Status.NotStarted,
-            };
+            select new { e.LeconTitre, e.Exercice, Statut = s?.Statut ?? Status.NotStarted };
 
         // Appliquer la logique de sélection du prochain exercice
         var avecStatuts = exercicesAvecStatuts.ToList();
-        var lastFinished = avecStatuts.FirstOrDefault(e => e.Statut == dto.Status.Passed);
+        var lastFinished = avecStatuts.FirstOrDefault(e => e.Statut == Status.Passed);
         if (lastFinished != null)
         {
             var next = exercices.SkipWhile(e => e.Exercice.IdExercice != lastFinished.Exercice.IdExercice).Skip(1).FirstOrDefault();
@@ -171,7 +167,7 @@ public class LeconsRepository : ILeconsRepository
             }
         }
 
-        var firstStarted = avecStatuts.FirstOrDefault(e => e.Statut == dto.Status.Started);
+        var firstStarted = avecStatuts.FirstOrDefault(e => e.Statut == Status.Started);
         if (firstStarted != null)
         {
             return (firstStarted.Exercice.Titre, firstStarted.LeconTitre);
@@ -204,7 +200,7 @@ public class LeconsRepository : ILeconsRepository
 
         // Recherche du dernier exercice commencé par l'utilisateur
         var dernierExerciceCommence = statuts
-            .Where(se => se.Statut == dto.Status.Started)
+            .Where(se => se.Statut == Status.Started)
             .OrderByDescending(se => se.Exercice.IdExercice)
             .Select(se => new
             {
@@ -221,4 +217,55 @@ public class LeconsRepository : ILeconsRepository
             : (string.Empty, string.Empty))!;
     }
 
+    public Lecon GetLecon(string leconTitre)
+    {
+        var lecon = _context.Lecons
+            .Include(l => l.ExercicesList)
+            .FirstOrDefault(l => l.Titre == leconTitre);
+        return DtoMapper.MapLecon(lecon, null, null);
+    }
+
+    public void UpdateLecon(string leconTitre, string inputTitre, string inputDescription)
+    {
+        var lecon = _context.Lecons
+            .Include(l => l.ExercicesList)
+            .FirstOrDefault(l => l.Titre == leconTitre);
+        if (lecon == null)
+        {
+            return;
+        }
+
+        lecon.Titre = inputTitre;
+        lecon.Description = inputDescription;
+        _context.SaveChanges();
+    }
+
+    public Task ToggleVisibilityLecon(string leconTitre)
+    {
+        var lecon = _context.Lecons
+            .FirstOrDefault(l => l.Titre == leconTitre);
+        if (lecon == null)
+        {
+            return Task.CompletedTask;
+        }
+
+        lecon.estVisible = !lecon.estVisible;
+        _context.SaveChanges();
+        return Task.CompletedTask;
+    }
+
+    public Task DeleteLecon(string leconTitre)
+    {
+        var lecon = _context.Lecons
+            .Include(l => l.ExercicesList)
+            .FirstOrDefault(l => l.Titre == leconTitre);
+        if (lecon == null)
+        {
+            return Task.CompletedTask;
+        }
+
+        _context.Lecons.Remove(lecon);
+        _context.SaveChanges();
+        return Task.CompletedTask;
+    }
 }

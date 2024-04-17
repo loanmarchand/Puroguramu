@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Puroguramu.Domains;
@@ -19,10 +18,9 @@ public class Lecons : PageModel
         _userManager = userManager;
     }
 
-    public void OnGet() => Lecon = _leconsRepository.GetLecon(LeconTitre, _userManager.GetUserId(User));
-
-    [BindProperty(SupportsGet = true)]
-    public string? LeconTitre { get; set; }
+    [BindProperty(SupportsGet = true)] public string? LeconTitre { get; set; }
 
     public Lecon? Lecon { get; set; }
+
+    public void OnGet() => Lecon = _leconsRepository.GetLeconWithStatuts(LeconTitre, _userManager.GetUserId(User));
 }

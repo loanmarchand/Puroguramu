@@ -9,4 +9,6 @@ public class DummyExercisesRepository : IExercisesRepository
 
     public Exercise GetExercise(string exerciseId)
         => new Exercise();
+
+    public Task CreateExerciceAsync(string leconTitre, string inputTitre) => throw new NotImplementedException();
 }
