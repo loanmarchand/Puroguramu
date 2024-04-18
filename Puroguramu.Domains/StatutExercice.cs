@@ -7,5 +7,6 @@ public class StatutExercice
     public Utilisateur Etudiant { get; set; }
 
     public Status Statut { get; set; }
+
     public string SolutionTempo { get; set; }
 }

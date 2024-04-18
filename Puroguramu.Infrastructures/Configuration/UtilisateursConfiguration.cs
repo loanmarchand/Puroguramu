@@ -16,7 +16,7 @@ public class UtilisateursConfiguration : IEntityTypeConfiguration<Utilisateurs>
     private static void SeedData(EntityTypeBuilder<Utilisateurs> builder)
     {
         var hasher = new PasswordHasher<Utilisateurs>();
-        var adminPassword = hasher.HashPassword(null, "Romain1*");
+        var adminPassword = hasher.HashPassword(null!, "Romain1*");
         var admin = new Utilisateurs
         {
             Id = Guid.NewGuid().ToString(),

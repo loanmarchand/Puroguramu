@@ -17,6 +17,14 @@ public class Exercice : PageModel
 
     private ExerciseResult? _result;
 
+    public Exercice(IAssessExercise assessor, ILeconsRepository leconsRepository, IStatutExerciceRepository statutExerciceRepository, UserManager<Utilisateurs> userManager)
+    {
+        _assessor = assessor;
+        _leconsRepository = leconsRepository;
+        _statutExerciceRepository = statutExerciceRepository;
+        _userManager = userManager;
+    }
+
     [BindProperty] public string Proposal { get; set; } = string.Empty;
 
     [BindProperty(SupportsGet = true)]
@@ -27,7 +35,6 @@ public class Exercice : PageModel
 
     [BindProperty(SupportsGet = true)]
     public int? ShowSolution { get; set; } = null;
-
 
     public string ExerciseResultStatus
         => _result?.Status switch
@@ -45,14 +52,6 @@ public class Exercice : PageModel
             ?.Select(result => new TestResultViewModel(result)) ?? Array.Empty<TestResultViewModel>();
 
     public Exercise Exercices { get; set; }
-
-    public Exercice(IAssessExercise assessor, ILeconsRepository leconsRepository, IStatutExerciceRepository statutExerciceRepository, UserManager<Utilisateurs> userManager)
-    {
-        _assessor = assessor;
-        _leconsRepository = leconsRepository;
-        _statutExerciceRepository = statutExerciceRepository;
-        _userManager = userManager;
-    }
 
     public async Task OnGetAsync()
     {

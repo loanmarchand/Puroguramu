@@ -10,7 +10,7 @@
 <div class="container mx-auto px-4 py-8">
     <h1 class="text-2xl font-bold text-center mb-6">@Model.LeconTitre</h1>
     <!--Ajout de la description-->
-    <p class="text-center text-gray-600">@Model.Lecon.Description</p>
+    <p class="text-center text-gray-600">@Model.Lecon!.Description</p>
 
     @if (Model.Lecon.ExercicesList.Any())
     {
@@ -22,7 +22,7 @@
                         <a href="@Url.Page("/Exercice", new { Titre = exo.Titre, LeconTitre = Model.LeconTitre, ShowSolution = 1 })" class="mr-4">
                             <img src="~/images/loupe.png" alt="Voir Solution" class="h-6 w-6">
                         </a>
-                        <a href="@Url.Page("/Exercice", new { Titre = exo.Titre, LeconTitre = Model.LeconTitre , ShowSolution = exo.etat != Status.Failed ? 0 : 1 })">
+                        <a href="@Url.Page("/Exercice", new { exo.Titre, Model.LeconTitre, ShowSolution = exo.Etat != Status.Failed ? 0 : 1 })">
                         <div>
                             <h2 class="text-xl font-semibold">@exo.Titre</h2>
                             <p class="text-sm">Difficulté : @exo.Difficulte</p>
@@ -31,16 +31,22 @@
                     </div>
                     <div>
                         @{
-                            if (exo.etat == Status.NotStarted)
+                            if (exo.Etat == Status.NotStarted)
                             {
-                                <img src="~/images/pasdemarre.png" alt="Pas démarré" class="h-6 w-6"> 
-                            }if (exo.etat == Status.Started)
+                                <img src="~/images/pasdemarre.png" alt="Pas démarré" class="h-6 w-6">
+                            }
+
+                            if (exo.Etat == Status.Started)
                             {
-                                <img src="~/images/demare.png" alt="En cours" class="h-6 w-6"> 
-                            }if (exo.etat == Status.Failed)
+                                <img src="~/images/demare.png" alt="En cours" class="h-6 w-6">
+                            }
+
+                            if (exo.Etat == Status.Failed)
                             {
-                                <img src="~/images/failed.png" alt="Raté" class="h-6 w-6"> 
-                            }if(exo.etat == Status.Passed)
+                                <img src="~/images/failed.png" alt="Raté" class="h-6 w-6">
+                            }
+
+                            if (exo.Etat == Status.Passed)
                             {
                                 <img src="~/images/passe.png" alt="Réussi" class="h-6 w-6"> 
                             }

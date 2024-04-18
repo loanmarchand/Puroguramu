@@ -15,7 +15,7 @@ public class ExercicesRepository : IExercisesRepository
 
     public int GetExercisesCount() => _context.Exercices.Count();
 
-    public Exercise GetExercise(string exerciseId) => DtoMapper.MapExercices(_context.Exercices.Find(exerciseId));
+    public Exercise GetExercise(string exerciseId) => DtoMapper.MapExercices(_context.Exercices.Find(exerciseId)!);
 
     public Task CreateExerciceAsync(string leconTitre, string inputTitre)
     {
@@ -28,7 +28,7 @@ public class ExercicesRepository : IExercisesRepository
         }
 
         var exercice = new Exercices { IdExercice = Guid.NewGuid().ToString(), Titre = inputTitre, EstVisible = true };
-        lecon.ExercicesList.Add(exercice);
+        lecon.ExercicesList?.Add(exercice);
         _context.SaveChanges();
         return Task.CompletedTask;
     }

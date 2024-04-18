@@ -2,14 +2,9 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -17,7 +12,6 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.Logging;
 using Puroguramu.Infrastructures.dto;
 
 namespace Puroguramu.App.Areas.Identity.Pages.Account
@@ -25,12 +19,12 @@ namespace Puroguramu.App.Areas.Identity.Pages.Account
     [AllowAnonymous]
     public class RegisterModel : PageModel
     {
+        private readonly IEmailSender _emailSender;
+        private readonly IUserEmailStore<Utilisateurs> _emailStore;
+        private readonly ILogger<RegisterModel> _logger;
         private readonly SignInManager<Utilisateurs> _signInManager;
         private readonly UserManager<Utilisateurs> _userManager;
         private readonly IUserStore<Utilisateurs> _userStore;
-        private readonly IUserEmailStore<Utilisateurs> _emailStore;
-        private readonly ILogger<RegisterModel> _logger;
-        private readonly IEmailSender _emailSender;
 
         public RegisterModel(
             UserManager<Utilisateurs> userManager,
@@ -65,62 +59,6 @@ namespace Puroguramu.App.Areas.Identity.Pages.Account
         ///     directly from your code. This API may change or be removed in future releases.
         /// </summary>
         public IList<AuthenticationScheme> ExternalLogins { get; set; }
-
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
-        public class InputModel
-        {
-            private const string EmailRegexPattern = @"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$";
-            private const string MatriculeRegexPattern = @"^[a-zA-Z][0-9]{6}$";
-
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
-            [Required]
-            [RegularExpression(EmailRegexPattern, ErrorMessage = "Le champ Email n'est pas une adresse e-mail valide.")]
-            [Display(Name = "Email")]
-            public string Email { get; set; }
-
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
-            [Required]
-            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
-            [DataType(DataType.Password)]
-            [Display(Name = "Password")]
-            public string Password { get; set; }
-
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
-            [DataType(DataType.Password)]
-            [Display(Name = "Confirm password")]
-            [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
-            public string ConfirmPassword { get; set; }
-
-            [Required(ErrorMessage = "Le champ Matricule est requis")]
-            [RegularExpression(MatriculeRegexPattern, ErrorMessage = "Le matricule doit être une chaîne de 7 caractères commençant par une lettre suivie de chiffres")]
-            public string Matricule { get; set; }
-
-            [Required(ErrorMessage = "Le champ nom est requis")]
-            [RegularExpression(@"^[a-zA-Z\s]*$", ErrorMessage = "Le nom doit être du texte")]
-            public string Nom { get; set; }
-
-            [Required(ErrorMessage = "Le champ prenom est requis")]
-            [RegularExpression(@"^[a-zA-Z\s]*$", ErrorMessage = "Le prenom doit être du texte")]
-            public string Prenom { get; set; }
-
-            [Required(ErrorMessage = "Le champ groupe est requis")]
-            [RegularExpression(@"^[0-9]$", ErrorMessage = "Le groupe doit être un chiffre")]
-
-            public string Groupe { get; set; }
-        }
-
 
         public async Task OnGetAsync(string returnUrl = null)
         {
@@ -183,6 +121,7 @@ namespace Puroguramu.App.Areas.Identity.Pages.Account
                         return LocalRedirect(returnUrl);
                     }
                 }
+
                 foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
@@ -213,7 +152,63 @@ namespace Puroguramu.App.Areas.Identity.Pages.Account
             {
                 throw new NotSupportedException("The default UI requires a user store with email support.");
             }
+
             return (IUserEmailStore<Utilisateurs>)_userStore;
+        }
+
+        /// <summary>
+        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+        ///     directly from your code. This API may change or be removed in future releases.
+        /// </summary>
+        public class InputModel
+        {
+            private const string EmailRegexPattern = @"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$";
+            private const string MatriculeRegexPattern = @"^[a-zA-Z][0-9]{6}$";
+
+            /// <summary>
+            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+            ///     directly from your code. This API may change or be removed in future releases.
+            /// </summary>
+            [Required]
+            [RegularExpression(EmailRegexPattern, ErrorMessage = "Le champ Email n'est pas une adresse e-mail valide.")]
+            [Display(Name = "Email")]
+            public string Email { get; set; }
+
+            /// <summary>
+            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+            ///     directly from your code. This API may change or be removed in future releases.
+            /// </summary>
+            [Required]
+            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+            [DataType(DataType.Password)]
+            [Display(Name = "Password")]
+            public string Password { get; set; }
+
+            /// <summary>
+            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+            ///     directly from your code. This API may change or be removed in future releases.
+            /// </summary>
+            [DataType(DataType.Password)]
+            [Display(Name = "Confirm password")]
+            [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+            public string ConfirmPassword { get; set; }
+
+            [Required(ErrorMessage = "Le champ Matricule est requis")]
+            [RegularExpression(MatriculeRegexPattern, ErrorMessage = "Le matricule doit être une chaîne de 7 caractères commençant par une lettre suivie de chiffres")]
+            public string Matricule { get; set; }
+
+            [Required(ErrorMessage = "Le champ nom est requis")]
+            [RegularExpression(@"^[a-zA-Z\s]*$", ErrorMessage = "Le nom doit être du texte")]
+            public string Nom { get; set; }
+
+            [Required(ErrorMessage = "Le champ prenom est requis")]
+            [RegularExpression(@"^[a-zA-Z\s]*$", ErrorMessage = "Le prenom doit être du texte")]
+            public string Prenom { get; set; }
+
+            [Required(ErrorMessage = "Le champ groupe est requis")]
+            [RegularExpression(@"^[0-9]$", ErrorMessage = "Le groupe doit être un chiffre")]
+
+            public string Groupe { get; set; }
         }
     }
 }

@@ -11,11 +11,11 @@ public class DtoMapper
         return new Lecon
         {
             Titre = lecons.Titre,
-            Description = lecons.Description,
-            estVisible = lecons.estVisible,
+            Description = lecons.Description!,
+            EstVisible = lecons.estVisible,
             ExercicesFait = exoFait ?? 0,
             ExercicesTotal = exoTotal ?? 0,
-            ExercicesList = lecons.ExercicesList.Select(MapExercices).ToList(),
+            ExercicesList = lecons.ExercicesList!.Select(MapExercices).ToList()
         };
     }
 
@@ -26,19 +26,17 @@ public class DtoMapper
             ImageUrl = cours.ImageUrl,
         };
 
-    public static Exercise MapExercices(Exercices exercices)
-    {
-        return new Exercise
+    public static Exercise MapExercices(Exercices exercices) =>
+        new()
         {
             Titre = exercices.Titre,
-            Enonce = exercices.Enonce,
-            Modele = exercices.Modele,
-            Solution = exercices.Solution,
+            Enonce = exercices.Enonce!,
+            Modele = exercices.Modele!,
+            Solution = exercices.Solution!,
             EstVisible = exercices.EstVisible,
-            Difficulte = exercices.Difficulte,
-            etat = Status.NotStarted,
+            Difficulte = exercices.Difficulte!,
+            Etat = Status.NotStarted
         };
-    }
 
     public static Lecon? MapLeconWithStatuts(Lecons lecons, IEnumerable<(Exercices exercice, dto.Status? statut)> exercicesStatuts)
     {
@@ -48,43 +46,34 @@ public class DtoMapper
         {
             Titre = lecons.Titre,
             Description = lecons.Description,
-            estVisible = lecons.estVisible,
+            EstVisible = lecons.estVisible,
             ExercicesList = exercices,
 
             // Ces champs peuvent nécessiter des ajustements selon les besoins spécifiques de votre application
-            ExercicesFait = exercices.Count(e => e.etat == Status.Passed),
+            ExercicesFait = exercices.Count(e => e.Etat == Status.Passed),
             ExercicesTotal = exercices.Count,
         };
     }
 
-    public static Exercise MapExercicesWithStatut(Exercices exercices, dto.Status? statut)
-    {
-        return new Exercise
+    public static Exercise MapExercicesWithStatut(Exercices exercices, dto.Status? statut) =>
+        new()
         {
             Titre = exercices.Titre,
-            Enonce = exercices.Enonce,
-            Modele = exercices.Modele,
-            Solution = exercices.Solution,
+            Enonce = exercices.Enonce!,
+            Modele = exercices.Modele!,
+            Solution = exercices.Solution!,
             EstVisible = exercices.EstVisible,
-            Difficulte = exercices.Difficulte,
-            etat = MapStatus(statut ?? dto.Status.NotStarted), // Assurez-vous d'utiliser une valeur par défaut appropriée
+            Difficulte = exercices.Difficulte!,
+            Etat = MapStatus(statut ?? dto.Status.NotStarted) // Assurez-vous d'utiliser une valeur par défaut appropriée
         };
-    }
 
-    private static Status MapStatus(dto.Status statut)
-    {
-        switch (statut)
+    private static Status MapStatus(dto.Status statut) =>
+        statut switch
         {
-            case dto.Status.Failed:
-                return Status.Failed;
-            case dto.Status.NotStarted:
-                return Status.NotStarted;
-            case dto.Status.Started:
-                return Status.Started;
-            case dto.Status.Passed:
-                return Status.Passed;
-            default:
-                return Status.NotStarted; // Valeur par défaut si le statut n'est pas reconnu
-        }
-    }
+            dto.Status.Failed => Status.Failed,
+            dto.Status.NotStarted => Status.NotStarted,
+            dto.Status.Started => Status.Started,
+            dto.Status.Passed => Status.Passed,
+            _ => Status.NotStarted
+        };
 }

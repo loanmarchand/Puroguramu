@@ -24,7 +24,7 @@
                             <div class="text-sm font-medium mr-2">
                                 @lecon.ExercicesFait / @lecon.ExercicesTotal Exercices réussis
                             </div>
-                            @if ((Role)ViewData["Role"] == Role.Teacher)
+                            @if ((Role)ViewData["Role"]! == Role.Teacher)
                             {
                                 <a href="@Url.Page("/CreateExercices", new { LeconTitre = lecon.Titre })"
                                    class="text-blue-500 hover:text-blue-700 mr-2">
@@ -32,7 +32,7 @@
                                 </a>
                                 <form method="post" asp-page-handler="ChangeVisibility" asp-route-leconTitre="@lecon.Titre">
                                     <button type="submit" class="text-blue-500 hover:text-blue-700 mr-2">
-                                        <i class="@(lecon.estVisible ? "fas fa-eye" : "fas fa-eye-slash") rounded-full"></i>
+                                        <i class="@(lecon.EstVisible ? "fas fa-eye" : "fas fa-eye-slash") rounded-full"></i>
                                     </button>
                                 </form>
                                 <a href="@Url.Page("/EditLecon", new { LeconTitre = lecon.Titre })" class="text-green-500 hover:text-green-700 mr-2">
@@ -56,7 +56,7 @@
         <p class="text-center text-gray-600">Aucune leçon trouvée pour ce cours.</p>
     }
 
-    @if ((Role)ViewData["Role"] == Role.Teacher)
+    @if ((Role)ViewData["Role"]! == Role.Teacher)
     {
         <div class="flex justify-center mt-8">
             <a href="@Url.Page("/CreateLecons", new { TitreCours = Model.TitreCours })" class="px-6 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-150 ease-in-out">Créer une nouvelle leçon</a>

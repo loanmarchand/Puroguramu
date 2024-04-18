@@ -22,7 +22,6 @@ public class DashBoard : PageModel
 
     public List<Lecon> Lecons { get; set; }
 
-
     public async Task OnGetAsync()
     {
         var user = await _userManager.GetUserAsync(User);
@@ -38,7 +37,6 @@ public class DashBoard : PageModel
         if (prochainExercice.Item1 == string.Empty || prochainExercice.Item2 == string.Empty)
         {
             //Afficher un pop-up pas d'exercice disponible
-
             return RedirectToPage();
         }
 
@@ -53,7 +51,6 @@ public class DashBoard : PageModel
         if (prochainExercice.Item1 == string.Empty || prochainExercice.Item2 == string.Empty)
         {
             //Afficher un pop-up pas d'exercice disponible
-
             return RedirectToPage();
         }
 

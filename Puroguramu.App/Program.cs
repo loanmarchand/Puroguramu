@@ -9,7 +9,6 @@ using Puroguramu.Infrastructures.Roslyn;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
@@ -53,7 +52,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-app.UseAuthentication();;
+app.UseAuthentication();
 
 app.UseAuthorization();
 

@@ -22,5 +22,5 @@ public class Lecons : PageModel
 
     public Lecon? Lecon { get; set; }
 
-    public void OnGet() => Lecon = _leconsRepository.GetLeconWithStatuts(LeconTitre, _userManager.GetUserId(User));
+    public void OnGet() => Lecon = _leconsRepository.GetLeconWithStatuts(LeconTitre!, _userManager.GetUserId(User));
 }

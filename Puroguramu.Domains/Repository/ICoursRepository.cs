@@ -3,5 +3,4 @@
 public interface ICoursRepository
 {
     IList<Cour> GetCours();
-
 }

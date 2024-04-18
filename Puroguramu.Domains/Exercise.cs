@@ -2,6 +2,11 @@
 
 public class Exercise
 {
+    private readonly string _template = @"// code-insertion-point
+
+// modele
+";
+
     public string Titre { get; set; }
 
     public string Enonce { get; set; }
@@ -14,13 +19,7 @@ public class Exercise
 
     public string Difficulte { get; set; }
 
-    public Status etat { get; set; }
-
-    private readonly string _template = @"// code-insertion-point
-
-// modele
-";
-
+    public Status Etat { get; set; }
 
     public string Stub => @"public class Exercice
 {

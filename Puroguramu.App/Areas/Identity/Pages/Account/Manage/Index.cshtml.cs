@@ -2,10 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
-using System;
 using System.ComponentModel.DataAnnotations;
-using System.Text.Encodings.Web;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -15,8 +12,8 @@ namespace Puroguramu.App.Areas.Identity.Pages.Account.Manage
 {
     public class IndexModel : PageModel
     {
-        private readonly UserManager<Utilisateurs> _userManager;
         private readonly SignInManager<Utilisateurs> _signInManager;
+        private readonly UserManager<Utilisateurs> _userManager;
 
         public IndexModel(
             UserManager<Utilisateurs> userManager,
@@ -46,37 +43,6 @@ namespace Puroguramu.App.Areas.Identity.Pages.Account.Manage
         [BindProperty]
         public InputModel Input { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
-        public class InputModel
-        {
-
-            public string Email { get; set; }
-
-            public string Matricule { get; set; }
-
-            [Required(ErrorMessage = "Le champ nom est requis")]
-            [RegularExpression(@"^[a-zA-Z\s]*$", ErrorMessage = "Le nom doit être du texte")]
-            public string Nom { get; set; }
-
-            [Required(ErrorMessage = "Le champ prenom est requis")]
-            [RegularExpression(@"^[a-zA-Z\s]*$", ErrorMessage = "Le prenom doit être du texte")]
-            public string Prenom { get; set; }
-
-            [Required(ErrorMessage = "Le champ groupe est requis")]
-            [RegularExpression(@"^[0-9]$", ErrorMessage = "Le groupe doit être un chiffre")]
-
-            public string Groupe { get; set; }
-
-            [Display(Name = "Image de profil")]
-            [ValidImage]
-            public IFormFile ProfilePicture { get; set; }
-
-            public string CurrentProfilePictureBase64 { get; set; }
-        }
-
         private async Task LoadAsync(Utilisateurs user)
         {
             var userName = await _userManager.GetUserNameAsync(user);
@@ -86,7 +52,6 @@ namespace Puroguramu.App.Areas.Identity.Pages.Account.Manage
             Input = new InputModel
             {
                 //PhoneNumber = phoneNumber
-
             };
         }
 
@@ -110,7 +75,6 @@ namespace Puroguramu.App.Areas.Identity.Pages.Account.Manage
             await LoadAsync(user); // Cette méthode doit aussi correctement initialiser `Input`
             return Page();
         }
-
 
         public async Task<IActionResult> OnPostAsync()
         {
@@ -149,6 +113,36 @@ namespace Puroguramu.App.Areas.Identity.Pages.Account.Manage
             await _signInManager.RefreshSignInAsync(user);
             StatusMessage = "Votre profil a été mis à jour";
             return RedirectToPage();
+        }
+
+        /// <summary>
+        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+        ///     directly from your code. This API may change or be removed in future releases.
+        /// </summary>
+        public class InputModel
+        {
+            public string Email { get; set; }
+
+            public string Matricule { get; set; }
+
+            [Required(ErrorMessage = "Le champ nom est requis")]
+            [RegularExpression(@"^[a-zA-Z\s]*$", ErrorMessage = "Le nom doit être du texte")]
+            public string Nom { get; set; }
+
+            [Required(ErrorMessage = "Le champ prenom est requis")]
+            [RegularExpression(@"^[a-zA-Z\s]*$", ErrorMessage = "Le prenom doit être du texte")]
+            public string Prenom { get; set; }
+
+            [Required(ErrorMessage = "Le champ groupe est requis")]
+            [RegularExpression(@"^[0-9]$", ErrorMessage = "Le groupe doit être un chiffre")]
+
+            public string Groupe { get; set; }
+
+            [Display(Name = "Image de profil")]
+            [ValidImage]
+            public IFormFile ProfilePicture { get; set; }
+
+            public string CurrentProfilePictureBase64 { get; set; }
         }
 
         public class ValidImageAttribute : ValidationAttribute
@@ -202,7 +196,7 @@ namespace Puroguramu.App.Areas.Identity.Pages.Account.Manage
                 return imageMagicNumbers.Contains(fileMagicNumber);
             }
 
-            protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
+            protected override ValidationResult IsValid(object value, ValidationContext validationContext)
             {
                  var asIFormFile = value as IFormFile;
                  if (asIFormFile == null)

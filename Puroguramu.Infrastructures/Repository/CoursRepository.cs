@@ -1,9 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Puroguramu.Domains;
+﻿using Puroguramu.Domains;
 using Puroguramu.Domains.Repository;
 using Puroguramu.Infrastructures.data;
 using Puroguramu.Infrastructures.Mapper;
-using Status = Puroguramu.Infrastructures.dto.Status;
 
 namespace Puroguramu.Infrastructures.Repository;
 
@@ -23,6 +21,5 @@ public class CoursRepository : ICoursRepository
 
         return coursList.Select(DtoMapper.MapCours).ToList();
     }
-
 }
 

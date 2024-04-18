@@ -1,8 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Puroguramu.Domains;
 using Puroguramu.Domains.Repository;
 using Puroguramu.Infrastructures.dto;
 
@@ -10,9 +8,9 @@ namespace Puroguramu.App.Pages;
 
 public class IndexModel : PageModel
 {
-    private readonly SignInManager<Utilisateurs> _signInManager;
-    private readonly ILeconsRepository _leconsRepository;
     private readonly IExercisesRepository _exercisesRepository;
+    private readonly ILeconsRepository _leconsRepository;
+    private readonly SignInManager<Utilisateurs> _signInManager;
 
     public IndexModel(SignInManager<Utilisateurs> signInManager, ILeconsRepository leconsRepository, IExercisesRepository exercisesRepository)
     {
@@ -24,8 +22,8 @@ public class IndexModel : PageModel
     public string? LeconsDispos { get; set; }
 
     public string? ExosDispos { get; set; }
-    public int CountEtudiant { get; set; }
 
+    public int CountEtudiant { get; set; }
 
     public IActionResult OnGet()
     {
