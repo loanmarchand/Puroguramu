@@ -23,14 +23,15 @@
                             <img src="~/images/loupe.png" alt="Voir Solution" class="h-6 w-6">
                         </a>
                         <a href="@Url.Page("/Exercice", new { exo.Titre, Model.LeconTitre, ShowSolution = exo.Etat != Status.Failed ? 0 : 1 })">
-                        <div>
-                            <h2 class="text-xl font-semibold">@exo.Titre</h2>
-                            <p class="text-sm">Difficulté : @exo.Difficulte</p>
-                        </div>
+                            <div>
+                                <h2 class="text-xl font-semibold">@exo.Titre</h2>
+                                <p class="text-sm">Difficulté : @exo.Difficulte</p>
+                            </div>
                         </a>
                     </div>
                     <div>
-                        @{
+                        @if ((Role)ViewData["Role"]! != Role.Teacher)
+                        {
                             if (exo.Etat == Status.NotStarted)
                             {
                                 <img src="~/images/pasdemarre.png" alt="Pas démarré" class="h-6 w-6">
@@ -48,11 +49,28 @@
 
                             if (exo.Etat == Status.Passed)
                             {
-                                <img src="~/images/passe.png" alt="Réussi" class="h-6 w-6"> 
+                                <img src="~/images/passe.png" alt="Réussi" class="h-6 w-6">
                             }
                         }
                     </div>
-                    
+                    @if ((Role)ViewData["Role"]! == Role.Teacher)
+                    {
+                        <form method="post" asp-page-handler="ChangeVisibility" asp-route-leconTitre="@exo.Titre">
+                            <button type="submit" class="text-blue-500 hover:text-blue-700 mr-2">
+                                <i class="@(exo.EstVisible ? "fas fa-eye" : "fas fa-eye-slash") rounded-full"></i>
+                            </button>
+                        </form>
+                        <a href="@Url.Page("/EditLecon", new { LeconTitre = exo.Titre })" class="text-green-500 hover:text-green-700 mr-2">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <form method="post" asp-page-handler="DeleteLecon" asp-route-leconTitre="@exo.Titre"
+                              onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette exercice?');">
+                            <button type="submit" class="text-red-500 hover:text-red-700">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </form>
+                    }
+
                 </div>
             }
         </div>
@@ -61,9 +79,11 @@
     {
         <p class="text-center text-gray-600">Aucun exercice trouvé pour cette leçon.</p>
     }
+    @if ((Role)ViewData["Role"]! == Role.Teacher)
+    {
+        <div class="flex justify-between items-center mt-8">
+            <a href="@Url.Page("/CreateExercices")" class="px-6 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-150 ease-in-out">Créer un nouvel exercice</a>
+        </div>
+    }
 
-    <!-- Exemple de boutons -->
-    @* <div class="flex justify-between items-center mt-8"> *@
-    @*     <a href="@Url.Page("/CreateExercices")" class="px-6 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-150 ease-in-out">Créer un nouvel exercice</a> *@
-    @* </div> *@
 </div>

@@ -29,11 +29,14 @@ public class CreateLecons : PageModel
     {
         if (ModelState.IsValid)
         {
-            await _leconsRepository.CreateLecon(TitreCours, Input.Titre);
-            return RedirectToPage("/HomeCours", new { TitreCours = TitreCours });
+            var add = await _leconsRepository.CreateLecon(TitreCours, Input.Titre);
+            if (add)
+            {
+                return RedirectToPage("/HomeCours", new { TitreCours });
+            }
         }
 
-        // If we get here, something went wrong
+        // If we get here, something went wrong, afficher la page avec les erreurs, le titre existe déjà //TODO
         return Page();
     }
 }

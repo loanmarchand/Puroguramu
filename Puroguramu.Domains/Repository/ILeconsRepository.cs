@@ -10,7 +10,7 @@ public interface ILeconsRepository
 
     string GetExerciceId(string leconTitre, string titre);
 
-    Task CreateLecon(string titreCours, string inputTitre);
+    Task<bool> CreateLecon(string titreCours, string inputTitre);
 
     IEnumerable<Lecon> GetLeconsForCours(string titreCours, string userId);
 

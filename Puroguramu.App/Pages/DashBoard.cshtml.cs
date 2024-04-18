@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Puroguramu.Domains;
 using Puroguramu.Domains.Repository;
 using Puroguramu.Infrastructures.dto;
+using Role = Puroguramu.Infrastructures.dto.Role;
 
 namespace Puroguramu.App.Pages;
 
@@ -26,7 +27,14 @@ public class DashBoard : PageModel
     {
         var user = await _userManager.GetUserAsync(User);
         ViewData["Role"] = user.Role;
-        Lecons = _leconsRepository.GetLeconsForCours(TitreCours, user.Id).ToList();
+        if (user.Role == Role.Teacher)
+        {
+            Lecons = _leconsRepository.GetLeconsForCours(TitreCours, user.Id).ToList();
+        }
+        else if (user.Role == Role.Student)
+        {
+            Lecons = _leconsRepository.GetLeconsForCours(TitreCours, user.Id).Where(l => l.EstVisible).ToList();
+        }
     }
 
     public async Task<IActionResult> OnPostProchainExerciceAsync()

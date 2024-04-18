@@ -84,18 +84,23 @@ public class LeconsRepository : ILeconsRepository
         return lecon.ExercicesList!.FirstOrDefault(e => e.Titre == titre)?.IdExercice ?? string.Empty;
     }
 
-    public Task CreateLecon(string titreCours, string inputTitre)
+    public Task<bool> CreateLecon(string titreCours, string inputTitre)
     {
         var lecon = new Lecons { IdLecons = Guid.NewGuid().ToString(), Titre = inputTitre, estVisible = true, };
         var cours = _context.Cours.Include(c => c.Lecons).FirstOrDefault(c => c.Titre == titreCours);
         if (cours == null)
         {
-            return Task.CompletedTask;
+            return Task.FromResult(false);
+        }
+
+        if (cours.Lecons!.Any(l => l.Titre == inputTitre))
+        {
+            return Task.FromResult(false);
         }
 
         cours.Lecons?.Add(lecon);
         _context.SaveChanges();
-        return Task.CompletedTask;
+        return Task.FromResult(true);
     }
 
     public IEnumerable<Lecon> GetLeconsForCours(string nameCours, string userId)
