@@ -8,6 +8,7 @@ using Status = Puroguramu.Domains.Status;
 
 namespace Puroguramu.App.Pages;
 
+[ValidateAntiForgeryToken]
 public class Exercice : PageModel
 {
     private readonly IAssessExercise _assessor;

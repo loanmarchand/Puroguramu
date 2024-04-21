@@ -4,6 +4,7 @@ using Puroguramu.Domains.Repository;
 
 namespace Puroguramu.App.Pages;
 
+[ValidateAntiForgeryToken]
 public class CreateExercices : PageModel
 {
     private readonly IExercisesRepository _exercisesRepository;

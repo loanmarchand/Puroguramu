@@ -8,6 +8,7 @@ using Role = Puroguramu.Infrastructures.dto.Role;
 
 namespace Puroguramu.App.Pages;
 
+[ValidateAntiForgeryToken]
 public class DashBoard : PageModel
 {
     private readonly ILeconsRepository _leconsRepository;

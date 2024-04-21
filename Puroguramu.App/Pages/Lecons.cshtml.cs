@@ -7,6 +7,7 @@ using Puroguramu.Infrastructures.dto;
 
 namespace Puroguramu.App.Pages;
 
+[ValidateAntiForgeryToken]
 public class Lecons : PageModel
 {
     private readonly ILeconsRepository _leconsRepository;
