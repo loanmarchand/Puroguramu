@@ -1,6 +1,8 @@
 @page "/DashBoard/{TitreCours}"
 @using Puroguramu.Infrastructures.dto
 @model Puroguramu.App.Pages.DashBoard
+@Html.AntiForgeryToken()
+
 
 @{
     Layout = "_Layout";

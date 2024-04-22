@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Puroguramu.App.Pages;
 
+[ValidateAntiForgeryToken]
 public class EditExercice : PageModel
 {
     public string ReturnUrl { get; set; }

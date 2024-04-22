@@ -4,6 +4,7 @@ using Puroguramu.Domains.Repository;
 
 namespace Puroguramu.App.Pages;
 
+[ValidateAntiForgeryToken]
 public class CreateLecons : PageModel
 {
     private ILeconsRepository _leconsRepository;

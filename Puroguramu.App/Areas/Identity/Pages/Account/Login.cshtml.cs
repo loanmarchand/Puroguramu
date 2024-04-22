@@ -13,6 +13,7 @@ using Puroguramu.Infrastructures.dto;
 
 namespace Puroguramu.App.Areas.Identity.Pages.Account
 {
+    [ValidateAntiForgeryToken]
     [AllowAnonymous]
     public class LoginModel : PageModel
     {
