@@ -6,5 +6,5 @@ public interface IExercisesRepository
 
     Exercise GetExercise(string exerciseId);
 
-    Task CreateExerciceAsync(string leconTitre, string inputTitre);
+    Task<bool> CreateExerciceAsync(string leconTitre, string inputTitre);
 }

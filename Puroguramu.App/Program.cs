@@ -35,7 +35,6 @@ builder.Services.AddScoped<ReverseProxyLinksMiddleware>();
 builder.Services.AddScoped<IAssessExercise, RoslynAssessor>();
 builder.Services.AddScoped<ILeconsRepository, LeconsRepository>();
 builder.Services.AddScoped<IExercisesRepository, ExercicesRepository>();
-builder.Services.AddScoped<ICoursRepository, CoursRepository>();
 builder.Services.AddScoped<IStatutExerciceRepository, StatutExerciceRepository>();
 var app = builder.Build();
 

@@ -84,38 +84,40 @@ public class LeconsRepository : ILeconsRepository
         return lecon.ExercicesList!.FirstOrDefault(e => e.Titre == titre)?.IdExercice ?? string.Empty;
     }
 
-    public Task<bool> CreateLecon(string titreCours, string inputTitre)
+    public Task<bool> CreateLecon(string inputTitre)
     {
-        var lecon = new Lecons { IdLecons = Guid.NewGuid().ToString(), Titre = inputTitre, estVisible = true, };
-        var cours = _context.Cours.Include(c => c.Lecons).FirstOrDefault(c => c.Titre == titreCours);
-        if (cours == null)
+        var lecon = new Lecons
+        {
+            IdLecons = Guid.NewGuid().ToString(), Titre = inputTitre, Description = string.Empty, estVisible = true
+        };
+
+        // Ajouter la nouvelle leçon à la base de données si elle n'existe pas déjà
+        if (_context.Lecons.Any(l => l.Titre == inputTitre))
         {
             return Task.FromResult(false);
         }
 
-        if (cours.Lecons!.Any(l => l.Titre == inputTitre))
-        {
-            return Task.FromResult(false);
-        }
-
-        cours.Lecons?.Add(lecon);
+        _context.Lecons.Add(lecon);
         _context.SaveChanges();
         return Task.FromResult(true);
     }
 
-    public IEnumerable<Lecon> GetLeconsForCours(string nameCours, string userId)
+    public IEnumerable<Lecon> GetLeconsForCours(string userId)
     {
         var lecona = new List<Lecon>();
-        var leconsList = _context.Cours
-            .Include(c => c.Lecons)!
-            .ThenInclude(l => l.ExercicesList)
-            .FirstOrDefault(c => c.Titre == nameCours)
-            ?.Lecons;
+        var leconsList = _context.Lecons
+            .Include(l => l.ExercicesList)
+            .ToList();
+
+        var positionsLecons = _context.PositionLecons.ToList();
 
         if (leconsList == null)
         {
             return lecona;
         }
+
+        //Trier les leçons par position
+        leconsList = leconsList.OrderBy(l => positionsLecons.FirstOrDefault(p => p.Lecons.IdLecons == l.IdLecons)?.Position).ToList();
 
         foreach (var lecon in leconsList)
         {
@@ -136,12 +138,11 @@ public class LeconsRepository : ILeconsRepository
         return lecona;
     }
 
-    public async Task<(string, string)> GetNextExerciceAsync(string titreCours, string userId)
+    public async Task<(string, string)> GetNextExerciceAsync(string userId)
     {
         // Charger tous les exercices pour un cours donné
-        var lecons = await _context.Cours
-            .Where(c => c.Titre == titreCours)
-            .SelectMany(c => c.Lecons!).Include(lecons => lecons.ExercicesList)
+        var lecons = await _context.Lecons
+            .Include(l => l.ExercicesList)
             .ToListAsync();
 
         // Charger les statuts séparément
@@ -182,20 +183,15 @@ public class LeconsRepository : ILeconsRepository
         return firstExercise != null ? (firstExercise.Exercice.Titre, firstExercise.LeconTitre) : (string.Empty, string.Empty);
     }
 
-    public async Task<(string, string)> GetActualExercicesAsync(string titreCours, string userId)
+    public async Task<(string, string)> GetActualExercicesAsync(string userId)
     {
         // Charger tous les exercices pour un cours donné
-        var lecons = await _context.Cours
-            .Where(c => c.Titre == titreCours)
-            .Include(c => c.Lecons)!
-            .ThenInclude(l => l.ExercicesList)
+        var lecons = await _context.Lecons
+            .Include(l => l.ExercicesList)
             .ToListAsync();
 
         // Extraire tous les ID des exercices pour une vérification ultérieure
-        var exercicesIds = lecons.SelectMany(c => c.Lecons!)
-            .SelectMany(l => l.ExercicesList!)
-            .Select(e => e.IdExercice)
-            .ToList();
+        var exercicesIds = lecons.SelectMany(l => l.ExercicesList!.Select(e => e.IdExercice)).ToList();
 
         // Charger les statuts des exercices pour cet utilisateur qui sont dans la liste des IDs chargés
         var statuts = await _context.StatutExercices
@@ -211,9 +207,7 @@ public class LeconsRepository : ILeconsRepository
             {
                 ExerciceId = se.Exercice.IdExercice,
                 ExerciceTitre = se.Exercice.Titre,
-                LeconTitre = lecons.SelectMany(c => c.Lecons!)
-                    .FirstOrDefault(l => l.ExercicesList!.Any(e => e.IdExercice == se.Exercice.IdExercice))
-                    ?.Titre,
+                LeconTitre = lecons.FirstOrDefault(l => l.ExercicesList!.Any(e => e.IdExercice == se.Exercice.IdExercice))?.Titre
             })
             .FirstOrDefault();
 
@@ -230,19 +224,26 @@ public class LeconsRepository : ILeconsRepository
         return DtoMapper.MapLecon(lecon, null, null);
     }
 
-    public void UpdateLecon(string leconTitre, string inputTitre, string inputDescription)
+    public Task<bool> UpdateLecon(string leconTitre, string inputTitre, string inputDescription)
     {
         var lecon = _context.Lecons
             .Include(l => l.ExercicesList)
             .FirstOrDefault(l => l.Titre == leconTitre);
         if (lecon == null)
         {
-            return;
+            return Task.FromResult(false);
+        }
+
+        //Verifier si le titre existe déjà
+        if (_context.Lecons.Any(l => l.Titre == inputTitre))
+        {
+            return Task.FromResult(false);
         }
 
         lecon.Titre = inputTitre;
         lecon.Description = inputDescription;
         _context.SaveChanges();
+        return Task.FromResult(true);
     }
 
     public Task ToggleVisibilityLecon(string leconTitre)
@@ -259,18 +260,114 @@ public class LeconsRepository : ILeconsRepository
         return Task.CompletedTask;
     }
 
-    public Task DeleteLecon(string leconTitre)
+    public async Task DeleteLecon(string leconTitre)
     {
-        var lecon = _context.Lecons
-            .Include(l => l.ExercicesList)!
-            .FirstOrDefault(l => l.Titre == leconTitre);
+        var lecon = await _context.Lecons
+            .Include(l => l.ExercicesList)
+            .FirstOrDefaultAsync(l => l.Titre == leconTitre);
+
         if (lecon == null)
         {
-            return Task.CompletedTask;
+            return;
         }
 
+        // Supprimer tous les statuts des exercices de la leçon
+        var exercicesIds = lecon.ExercicesList.Select(e => e.IdExercice);
+        var statutsExercices = _context.StatutExercices.Where(se => exercicesIds.Contains(se.Exercice.IdExercice));
+        _context.StatutExercices.RemoveRange(statutsExercices);
+
+        // Supprimer la position de la leçon
+        var positionLecon = _context.PositionLecons.FirstOrDefault(p => p.Lecons.IdLecons == lecon.IdLecons);
+        if (positionLecon != null)
+        {
+            _context.PositionLecons.Remove(positionLecon);
+        }
+
+        // Supprimer la leçon et ses exercices
+        _context.Exercices.RemoveRange(lecon.ExercicesList);
         _context.Lecons.Remove(lecon);
+
+        await _context.SaveChangesAsync();
+
+        // Mettre à jour les positions des leçons restantes
+        UpdateLeconPositions();
+    }
+
+
+    public int? GetExercicesFait(string leconTitre)
+    {
+        // Trouver la leçon par son titre
+        var lecon = _context.Lecons
+            .Include(l => l.ExercicesList)
+            .FirstOrDefault(l => l.Titre == leconTitre);
+
+        if (lecon == null || !lecon.ExercicesList.Any())
+        {
+            // Si aucune leçon ou aucun exercice n'est trouvé, retourner 0
+            return 0;
+        }
+
+        // Récupérer les IDs de tous les exercices de la leçon
+        var exerciceIds = lecon.ExercicesList.Select(e => e.IdExercice).ToList();
+
+        // Trouver les étudiants qui ont réussi tous les exercices de la leçon
+        var allPassedStudentsCount = _context.StatutExercices
+            .Where(se => exerciceIds.Contains(se.Exercice.IdExercice) && se.Statut == Status.Passed)
+            .GroupBy(se => se.Etudiant.Id)
+            .Select(group => new { EtudiantId = group.Key, PassedExercisesCount = group.Count() })
+            .Count(g => g.PassedExercisesCount == exerciceIds.Count);
+
+        return allPassedStudentsCount;
+    }
+
+    public async Task MoveLecon(string leconTitre, string direction)
+    {
+        // Récupérer la leçon et sa position actuelle
+        var currentPosition = await _context.PositionLecons
+            .Include(p => p.Lecons)
+            .FirstOrDefaultAsync(p => p.Lecons.Titre == leconTitre);
+
+        if (currentPosition == null)
+        {
+            // Si la position n'est pas trouvée, cela pourrait indiquer un problème de synchronisation des données
+            return;
+        }
+
+        // Calculer la nouvelle position en fonction de la direction
+        var newPosition = direction.ToLower() == "up" ? currentPosition.Position - 1 : currentPosition.Position + 1;
+
+        // Vérifier que la nouvelle position est dans les limites valides
+        if (newPosition < 0 || newPosition > _context.PositionLecons.Count())
+        {
+            // Si la nouvelle position n'est pas valide, ne faites rien
+            return;
+        }
+
+        // Trouver la leçon à échanger avec
+        var targetPosition = await _context.PositionLecons
+            .FirstOrDefaultAsync(p => p.Position == newPosition);
+
+        if (targetPosition != null)
+        {
+            // Échanger les positions
+            targetPosition.Position = currentPosition.Position;
+            currentPosition.Position = newPosition;
+
+            // Sauvegarder les changements
+            _context.Update(currentPosition);
+            _context.Update(targetPosition);
+            await _context.SaveChangesAsync();
+        }
+    }
+
+    private void UpdateLeconPositions()
+    {
+        var remainingLecons = _context.PositionLecons.OrderBy(p => p.Position).ToList();
+        for (var i = 0; i < remainingLecons.Count; i++)
+        {
+            remainingLecons[i].Position = i;
+        }
+
         _context.SaveChanges();
-        return Task.CompletedTask;
     }
 }

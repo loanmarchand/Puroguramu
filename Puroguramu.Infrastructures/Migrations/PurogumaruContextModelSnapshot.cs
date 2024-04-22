@@ -149,32 +149,6 @@ namespace Puroguramu.Infrastructures.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Puroguramu.Infrastructures.dto.Cours", b =>
-                {
-                    b.Property<string>("IdCours")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Titre")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("IdCours");
-
-                    b.ToTable("Cours");
-
-                    b.HasData(
-                        new
-                        {
-                            IdCours = "1",
-                            ImageUrl = "~/images/csharp.svg",
-                            Titre = "C#"
-                        });
-                });
-
             modelBuilder.Entity("Puroguramu.Infrastructures.dto.Exercices", b =>
                 {
                     b.Property<string>("IdExercice")
@@ -214,9 +188,6 @@ namespace Puroguramu.Infrastructures.Migrations
                     b.Property<string>("IdLecons")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("CoursIdCours")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Description")
                         .HasColumnType("TEXT");
 
@@ -228,8 +199,6 @@ namespace Puroguramu.Infrastructures.Migrations
                         .HasColumnType("INTEGER");
 
                     b.HasKey("IdLecons");
-
-                    b.HasIndex("CoursIdCours");
 
                     b.HasIndex("Titre")
                         .IsUnique();
@@ -386,9 +355,9 @@ namespace Puroguramu.Infrastructures.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "af8ce97e-8a62-4e83-91b6-9ebcf2072041",
+                            Id = "ef8d2ee2-c67f-4dbe-bae5-9ff1d28a3a13",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "759e18e6-aade-4879-8b6f-ac8d6aa5af55",
+                            ConcurrencyStamp = "fd44043b-f445-4388-a5b1-c8e1b3dc8a25",
                             Email = "admin@example.com",
                             EmailConfirmed = false,
                             Groupe = "0",
@@ -397,10 +366,11 @@ namespace Puroguramu.Infrastructures.Migrations
                             Nom = "admin",
                             NormalizedEmail = "ADMIN@EXAMPLE.COM",
                             NormalizedUserName = "ADMIN@EXAMPLE.COM",
-                            PasswordHash = "AQAAAAEAACcQAAAAEIHzuv1RHJkaVyKrBGkb+1CI5adSagPWuVj7n/aFt9OEWg+m1y4i3GZwihzkMPRcHg==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEESXWUPKUai1LCEvDpN1hSrxlbuwWDljUSjL0mudl04VdGwSUs0nYC/oqIyA7yIgaA==",
                             PhoneNumberConfirmed = false,
                             Prenom = "admin",
-                            SecurityStamp = "0b752d8b-21e6-4532-b6f3-680ec7d9077d",
+                            Role = 1,
+                            SecurityStamp = "6d188568-e4b2-4920-be7a-0c146643a2b6",
                             TwoFactorEnabled = false,
                             UserName = "admin@example.com"
                         });
@@ -461,14 +431,8 @@ namespace Puroguramu.Infrastructures.Migrations
                 {
                     b.HasOne("Puroguramu.Infrastructures.dto.Lecons", null)
                         .WithMany("ExercicesList")
-                        .HasForeignKey("LeconsIdLecons");
-                });
-
-            modelBuilder.Entity("Puroguramu.Infrastructures.dto.Lecons", b =>
-                {
-                    b.HasOne("Puroguramu.Infrastructures.dto.Cours", null)
-                        .WithMany("Lecons")
-                        .HasForeignKey("CoursIdCours");
+                        .HasForeignKey("LeconsIdLecons")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Puroguramu.Infrastructures.dto.PositionExercices", b =>
@@ -502,11 +466,6 @@ namespace Puroguramu.Infrastructures.Migrations
                     b.Navigation("Etudiant");
 
                     b.Navigation("Exercice");
-                });
-
-            modelBuilder.Entity("Puroguramu.Infrastructures.dto.Cours", b =>
-                {
-                    b.Navigation("Lecons");
                 });
 
             modelBuilder.Entity("Puroguramu.Infrastructures.dto.Lecons", b =>

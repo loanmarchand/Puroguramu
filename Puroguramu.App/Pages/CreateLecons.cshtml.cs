@@ -15,13 +15,6 @@ public class CreateLecons : PageModel
 
     [BindProperty] public InputModel Input { get; set; }
 
-    [BindProperty(SupportsGet = true)] public string TitreCours { get; set; }
-
-    public class InputModel
-    {
-        public string Titre { get; set; }
-    }
-
     public void OnGet()
     {
     }
@@ -30,14 +23,20 @@ public class CreateLecons : PageModel
     {
         if (ModelState.IsValid)
         {
-            var add = await _leconsRepository.CreateLecon(TitreCours, Input.Titre);
+            Console.WriteLine("Titre: " + Input.Titre);
+            var add = await _leconsRepository.CreateLecon(Input.Titre);
             if (add)
             {
-                return RedirectToPage("/Dashboard", new { TitreCours });
+                return RedirectToPage("/Dashboard");
             }
         }
 
         // If we get here, something went wrong, afficher la page avec les erreurs, le titre existe déjà //TODO
         return Page();
+    }
+
+    public class InputModel
+    {
+        public string Titre { get; set; }
     }
 }

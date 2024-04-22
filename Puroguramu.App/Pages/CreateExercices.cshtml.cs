@@ -28,7 +28,12 @@ public class CreateExercices : PageModel
             return Page();
         }
 
-        await _exercisesRepository.CreateExerciceAsync(LeconTitre, Input.Titre);
+        var reslut = await _exercisesRepository.CreateExerciceAsync(LeconTitre, Input.Titre);
+        if (!reslut)
+        {
+            //Afficher un message d'erreur
+            return Page();
+        }
 
         return RedirectToPage(ReturnUrl);
     }

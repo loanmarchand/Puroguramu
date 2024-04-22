@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Puroguramu.Domains;
 using Puroguramu.Domains.Repository;
+using Puroguramu.Infrastructures.dto;
 
 namespace Puroguramu.App.Pages;
 
@@ -8,19 +11,28 @@ namespace Puroguramu.App.Pages;
 public class EditLecon : PageModel
 {
     private readonly ILeconsRepository _leconsRepository;
+    private readonly UserManager<Utilisateurs> _userManager;
 
-    public EditLecon(ILeconsRepository leconsRepository) => _leconsRepository = leconsRepository;
+
+    public EditLecon(ILeconsRepository leconsRepository, UserManager<Utilisateurs> userManager)
+    {
+        _leconsRepository = leconsRepository;
+        _userManager = userManager;
+    }
 
     public string ReturnUrl { get; set; }
 
     [BindProperty] public InputModel Input { get; set; }
 
     [BindProperty(SupportsGet = true)] public string LeconTitre { get; set; }
+    public Lecon Lecon { get; set; }
 
-    public void OnGet()
+    public async void OnGetAsync()
     {
-        var lecon = _leconsRepository.GetLecon(LeconTitre);
-        Input = new InputModel { Titre = lecon.Titre, Description = lecon.Description };
+        var user = await _userManager.GetUserAsync(User);
+        ViewData["Role"] = user.Role;
+        Lecon = _leconsRepository.GetLecon(LeconTitre);
+        Input = new InputModel { Titre = Lecon.Titre, Description = Lecon.Description };
     }
 
     public IActionResult OnPost()
@@ -30,7 +42,12 @@ public class EditLecon : PageModel
             return Page();
         }
 
-        _leconsRepository.UpdateLecon(LeconTitre, Input.Titre, Input.Description);
+        var verif = _leconsRepository.UpdateLecon(LeconTitre, Input.Titre, Input.Description);
+        if (!verif.Result)
+        {
+            //TODO: Afficher un message d'erreur
+            return Page();
+        }
 
         return RedirectToPage("/DashBoard");
     }

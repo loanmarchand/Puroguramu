@@ -28,14 +28,11 @@ public class Exercice : PageModel
 
     [BindProperty] public string Proposal { get; set; } = string.Empty;
 
-    [BindProperty(SupportsGet = true)]
-    public string Titre { get; set; } = string.Empty;
+    [BindProperty(SupportsGet = true)] public string Titre { get; set; } = string.Empty;
 
-    [BindProperty(SupportsGet = true)]
-    public string LeconTitre { get; set; } = string.Empty;
+    [BindProperty(SupportsGet = true)] public string LeconTitre { get; set; } = string.Empty;
 
-    [BindProperty(SupportsGet = true)]
-    public int? ShowSolution { get; set; } = null;
+    [BindProperty(SupportsGet = true)] public int? ShowSolution { get; set; } = null;
 
     public string ExerciseResultStatus
         => _result?.Status switch
@@ -57,21 +54,29 @@ public class Exercice : PageModel
     public async Task OnGetAsync()
     {
         Exercices = _leconsRepository.GetExercice(LeconTitre, Titre);
+        var statut = _statutExerciceRepository.GetStatut(_leconsRepository.GetExerciceId(LeconTitre, Titre), _userManager.GetUserId(User));
+        if (statut == null)
+        {
+            await _statutExerciceRepository.CreateStatut(_leconsRepository.GetExerciceId(LeconTitre, Titre), _userManager.GetUserId(User));
+        }
+
         if (ShowSolution is 1)
         {
             Proposal = Exercices.Solution;
-            await _statutExerciceRepository.UpdateStatut(_leconsRepository.GetExerciceId(LeconTitre, Titre), _userManager.GetUserId(User), ExerciseStatus.Failed);
+
+            if (statut != Status.Passed)
+            {
+                await _statutExerciceRepository.UpdateStatut(_leconsRepository.GetExerciceId(LeconTitre, Titre), _userManager.GetUserId(User), ExerciseStatus.Failed);
+            }
         }
         else
         {
-            var statut = _statutExerciceRepository.GetStatut(_leconsRepository.GetExerciceId(LeconTitre, Titre), _userManager.GetUserId(User));
             _result = await _assessor.StubForExercise(_leconsRepository.GetExerciceId(LeconTitre, Titre));
             if (statut == null)
             {
-                await _statutExerciceRepository.CreateStatut(_leconsRepository.GetExerciceId(LeconTitre, Titre), _userManager.GetUserId(User));
                 Proposal = Exercices.Stub;
             }
-            else if (statut == Status.Started)
+            else
             {
                 var prop = await _statutExerciceRepository.GetSolutionTempo(_leconsRepository.GetExerciceId(LeconTitre, Titre), _userManager.GetUserId(User));
                 Console.WriteLine("prop:" + prop);
@@ -92,6 +97,20 @@ public class Exercice : PageModel
                 await _statutExerciceRepository.UpdateSolutionTempo(_leconsRepository.GetExerciceId(LeconTitre, Titre), _userManager.GetUserId(User), Proposal);
             }
         }
+    }
+
+    public async Task<IActionResult> OnPostProchainExerciceAsync()
+    {
+        var user = _userManager.GetUserAsync(User).Result;
+        var prochainExercice = await _leconsRepository.GetNextExerciceAsync(user.Id);
+        Console.WriteLine(prochainExercice);
+        if (prochainExercice.Item1 == string.Empty || prochainExercice.Item2 == string.Empty)
+        {
+            //Afficher un pop-up pas d'exercice disponible
+            return RedirectToPage();
+        }
+
+        return RedirectToPage("/Exercice", new { Titre = prochainExercice.Item1, LeconTitre = prochainExercice.Item2 });
     }
 }
 

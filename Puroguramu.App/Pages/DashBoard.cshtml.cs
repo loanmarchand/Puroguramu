@@ -30,18 +30,24 @@ public class DashBoard : PageModel
         ViewData["Role"] = user.Role;
         if (user.Role == Role.Teacher)
         {
-            Lecons = _leconsRepository.GetLeconsForCours(TitreCours, user.Id).ToList();
+            Lecons = _leconsRepository.GetLeconsForCours(user.Id).ToList();
+            var nombreEtudiants = _userManager.Users.Count(e => e.Role == Role.Student);
+            foreach (var lecon in Lecons)
+            {
+                lecon.ExercicesFait = _leconsRepository.GetExercicesFait(lecon.Titre);
+                lecon.ExercicesTotal = nombreEtudiants;
+            }
         }
         else if (user.Role == Role.Student)
         {
-            Lecons = _leconsRepository.GetLeconsForCours(TitreCours, user.Id).Where(l => l.EstVisible).ToList();
+            Lecons = _leconsRepository.GetLeconsForCours(user.Id).Where(l => l.EstVisible).ToList();
         }
     }
 
     public async Task<IActionResult> OnPostProchainExerciceAsync()
     {
         var user = _userManager.GetUserAsync(User).Result;
-        var prochainExercice = await _leconsRepository.GetNextExerciceAsync(TitreCours, user.Id);
+        var prochainExercice = await _leconsRepository.GetNextExerciceAsync(user.Id);
         Console.WriteLine(prochainExercice);
         if (prochainExercice.Item1 == string.Empty || prochainExercice.Item2 == string.Empty)
         {
@@ -56,7 +62,7 @@ public class DashBoard : PageModel
     {
         // Logique pour reprendre les exercices
         var user = _userManager.GetUserAsync(User).Result;
-        var prochainExercice = await _leconsRepository.GetActualExercicesAsync(TitreCours, user.Id);
+        var prochainExercice = await _leconsRepository.GetActualExercicesAsync(user.Id);
         if (prochainExercice.Item1 == string.Empty || prochainExercice.Item2 == string.Empty)
         {
             //Afficher un pop-up pas d'exercice disponible
@@ -75,6 +81,12 @@ public class DashBoard : PageModel
     public async Task<IActionResult> OnPostDeleteLeconAsync(string leconTitre)
     {
         await _leconsRepository.DeleteLecon(leconTitre);
+        return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostMoveLeconAsync(string leconTitre, string direction)
+    {
+        await _leconsRepository.MoveLecon(leconTitre, direction);
         return RedirectToPage();
     }
 }

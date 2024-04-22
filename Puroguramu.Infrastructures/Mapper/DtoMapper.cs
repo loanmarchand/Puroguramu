@@ -19,13 +19,6 @@ public class DtoMapper
         };
     }
 
-    public static Cour MapCours(Cours cours) =>
-        new()
-        {
-            Titre = cours.Titre,
-            ImageUrl = cours.ImageUrl,
-        };
-
     public static Exercise MapExercices(Exercices exercices) =>
         new()
         {

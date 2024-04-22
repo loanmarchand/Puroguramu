@@ -1,5 +1,4 @@
 @page "/Exercice/{Titre}/{LeconTitre}/{ShowSolution:int?}"
-@using Puroguramu.App.Pages
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @model Puroguramu.App.Pages.Exercice
 @Html.AntiForgeryToken()
@@ -42,6 +41,17 @@
             </div>
         </div>
     </form>
+    @if (Model.ExerciseResultStatus == "Succeeded")
+    {
+        <div class="flex justify-between items-center mt-8">
+            <form method="post" asp-page-handler="ProchainExercice">
+                <button type="submit"
+                        class="px-6 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-150 ease-in-out">
+                    Prochain Exercice
+                </button>
+            </form>
+        </div>
+    }
 </section>
 
 @section Scripts{
