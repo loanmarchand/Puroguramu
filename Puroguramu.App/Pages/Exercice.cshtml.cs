@@ -68,10 +68,12 @@ public class Exercice : PageModel
             if (statut == null)
             {
                 await _statutExerciceRepository.CreateStatut(_leconsRepository.GetExerciceId(LeconTitre, Titre), _userManager.GetUserId(User));
+                Proposal = Exercices.Stub;
             }
             else if (statut == Status.Started)
             {
                 var prop = await _statutExerciceRepository.GetSolutionTempo(_leconsRepository.GetExerciceId(LeconTitre, Titre), _userManager.GetUserId(User));
+                Console.WriteLine("prop:" + prop);
                 Proposal = prop ?? Exercices.Stub;
             }
         }

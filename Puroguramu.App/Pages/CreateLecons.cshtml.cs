@@ -32,7 +32,7 @@ public class CreateLecons : PageModel
             var add = await _leconsRepository.CreateLecon(TitreCours, Input.Titre);
             if (add)
             {
-                return RedirectToPage("/HomeCours", new { TitreCours });
+                return RedirectToPage("/Dashboard", new { TitreCours });
             }
         }
 

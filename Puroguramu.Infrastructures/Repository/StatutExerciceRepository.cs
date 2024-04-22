@@ -5,6 +5,7 @@ using Puroguramu.Domains.Repository;
 using Puroguramu.Infrastructures.data;
 using Puroguramu.Infrastructures.dto;
 using Status = Puroguramu.Domains.Status;
+using StatutExercice = Puroguramu.Infrastructures.dto.StatutExercice;
 
 namespace Puroguramu.Infrastructures.Repository;
 
@@ -38,9 +39,9 @@ public class StatutExerciceRepository : IStatutExerciceRepository
 
     public Task CreateStatut(string getExerciceId, string getUserId)
     {
-        var statut = new dto.StatutExercice
+        var statut = new StatutExercice
         {
-            IdStatutExercice = default(Guid).ToString(),
+            IdStatutExercice = Guid.NewGuid().ToString(),
             Exercice = _context.Exercices.Find(getExerciceId),
             Etudiant = _userManager.FindByIdAsync(getUserId).Result,
             Statut = dto.Status.Started,
