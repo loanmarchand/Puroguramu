@@ -11,5 +11,9 @@ public class LeconsConfiguration : IEntityTypeConfiguration<Lecons>
         builder.HasKey(lecons => lecons.IdLecons);
         builder.HasIndex(lecons => lecons.Titre)
             .IsUnique();
+
+        builder.HasMany(lecon => lecon.ExercicesList)
+            .WithOne()
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

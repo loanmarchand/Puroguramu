@@ -262,7 +262,7 @@ public class LeconsRepository : ILeconsRepository
     public Task DeleteLecon(string leconTitre)
     {
         var lecon = _context.Lecons
-            .Include(l => l.ExercicesList)
+            .Include(l => l.ExercicesList)!
             .FirstOrDefault(l => l.Titre == leconTitre);
         if (lecon == null)
         {

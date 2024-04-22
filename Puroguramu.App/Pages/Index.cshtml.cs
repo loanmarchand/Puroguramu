@@ -34,7 +34,7 @@ public class IndexModel : PageModel
             return RedirectToPage("./CoursPage");
         }
 
-        CountEtudiant = _signInManager.UserManager.Users.Count();
+        CountEtudiant = _signInManager.UserManager.Users.Count(e => e.Role == Role.Student);
         LeconsDispos = _leconsRepository.GetLecons().Count().ToString();
         ExosDispos = _exercisesRepository.GetExercisesCount().ToString();
 
