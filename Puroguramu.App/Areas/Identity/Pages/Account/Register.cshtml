@@ -1,7 +1,5 @@
 ﻿@page
 @model RegisterModel
-@Html.AntiForgeryToken()
-
 
 @{
     ViewData["Title"] = "Register";
@@ -42,7 +40,7 @@
                         <option value="2i2">2i2</option>
                         <option value="2i3">2i3</option>
                         <option value="2i4">2i4</option>
-                    </select>
+                    </select>     
                     <span asp-validation-for="Input.Groupe" class="text-red-500 text-xs"></span>
                 </div>
                 <div class="form-group">
