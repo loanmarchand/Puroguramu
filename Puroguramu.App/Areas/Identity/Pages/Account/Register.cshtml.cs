@@ -207,7 +207,8 @@ namespace Puroguramu.App.Areas.Identity.Pages.Account
             public string Prenom { get; set; }
 
             [Required(ErrorMessage = "Le champ groupe est requis")]
-            [RegularExpression(@"^[0-9]$", ErrorMessage = "Le groupe doit être un chiffre")]
+            [RegularExpression(@"^2i[1-4]$", ErrorMessage = "Le groupe doit être une des options disponibles.")]
+
 
             public string Groupe { get; set; }
         }
