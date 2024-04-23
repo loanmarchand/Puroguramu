@@ -31,7 +31,7 @@
                    {
                        <img id="profile-picture-preview" src="~/images/profilepicture.jpg" class="h-32 w-32 rounded-full mx-auto my-4" alt="Profil"/>
                    }
-                   <label asp-for="Input.ProfilePicture" class="block text-sm font-medium text-gray-700">Nouvelle image de profil (.jpg .png .gif)</label>
+                   <label asp-for="Input.ProfilePicture" class="block text-sm font-medium text-gray-700">Nouvelle image de profil (.jpg .png) Max 1Mo</label>
                    <input asp-for="Input.ProfilePicture" type="file" class="mt-2 w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" onchange="previewProfilePicture(this)" />
                    <span asp-validation-for="Input.ProfilePicture" class="text-red-500 text-xs"></span>
                </div>
@@ -57,7 +57,13 @@
                 </div>
                 <div class="form-group">
                     <label asp-for="Input.Groupe" class="block text-sm font-medium text-gray-700">Groupe</label>
-                    <input asp-for="Input.Groupe" class="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" autocomplete="username" aria-required="true" value="@user.Groupe"/>
+                    <select asp-for="Input.Groupe" class="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" aria-required="true">
+                        <option value="@user.Groupe" selected hidden>@user.Groupe</option>
+                        <option value="2i1">2i1</option>
+                        <option value="2i2">2i2</option>
+                        <option value="2i3">2i3</option>
+                        <option value="2i4">2i4</option>
+                    </select> 
                     <span asp-validation-for="Input.Groupe" class="text-red-500 text-xs"></span>
                 </div>
                 <div class="flex justify-center">

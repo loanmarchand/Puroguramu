@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Puroguramu.Infrastructures.dto;
 
 namespace Puroguramu.App.Areas.Identity.Pages.Account.Manage
@@ -66,7 +67,7 @@ namespace Puroguramu.App.Areas.Identity.Pages.Account.Manage
             public string Prenom { get; set; }
 
             [Required(ErrorMessage = "Le champ groupe est requis")]
-            [RegularExpression(@"^[0-9]$", ErrorMessage = "Le groupe doit être un chiffre")]
+            [RegularExpression(@"^2i[1-4]$", ErrorMessage = "Le groupe doit être une des options disponibles.")]
 
             public string Groupe { get; set; }
 
@@ -153,10 +154,18 @@ namespace Puroguramu.App.Areas.Identity.Pages.Account.Manage
 
         public class ValidImageAttribute : ValidationAttribute
         {
+            private const int MaxFileSizeInBytes = 1048576;
+
             public bool IsImageValid(IFormFile file)
             {
                 // Vérification si le fichier existe et n'est pas vide
                 if (file == null || file.Length == 0)
+                {
+                    return false;
+                }
+
+                // Vérification de la taille du fichier
+                if (file.Length > MaxFileSizeInBytes)
                 {
                     return false;
                 }
@@ -192,7 +201,8 @@ namespace Puroguramu.App.Areas.Identity.Pages.Account.Manage
                 {
                     "FFD8FF", // JPEG
                     "89504E", // PNG
-                    "474946", // GIF
+
+                    //"474946", // GIF
                 };
 
                 // Lire les premiers octets du fichier pour obtenir le numéro magique
