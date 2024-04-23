@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Puroguramu.Domains.Repository;
 
@@ -37,6 +38,8 @@ public class CreateLecons : PageModel
 
     public class InputModel
     {
+        [Required(ErrorMessage = "Le champ titre est requis")]
+        [RegularExpression(@"^(?!.*<|>).*.{5,}$", ErrorMessage = "Le titre doit contenir au moins 5 caractères et ne doit pas inclure les symboles <>.")]
         public string Titre { get; set; }
     }
 }
