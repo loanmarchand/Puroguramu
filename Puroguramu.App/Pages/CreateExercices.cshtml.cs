@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Puroguramu.Domains.Repository;
@@ -6,6 +7,7 @@ using Puroguramu.Domains.Repository;
 namespace Puroguramu.App.Pages;
 
 [ValidateAntiForgeryToken]
+[Authorize(Policy = "IsTeacher")]
 public class CreateExercices : PageModel
 {
     private readonly IExercisesRepository _exercisesRepository;
@@ -33,6 +35,7 @@ public class CreateExercices : PageModel
         if (!reslut)
         {
             //Afficher un message d'erreur
+            ModelState.AddModelError("Input.Titre", "L'exercice existe déjà");
             return Page();
         }
 

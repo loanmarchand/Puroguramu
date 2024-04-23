@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Puroguramu.Domains;
@@ -8,6 +9,7 @@ using Puroguramu.Infrastructures.dto;
 namespace Puroguramu.App.Pages;
 
 [ValidateAntiForgeryToken]
+[Authorize(Policy = "IsTeacher")]
 public class EditLecon : PageModel
 {
     private readonly IExercisesRepository _exercisesRepository;
@@ -41,17 +43,17 @@ public class EditLecon : PageModel
     {
         if (!ModelState.IsValid)
         {
-            return Page();
-        }
-
-        var verif = _leconsRepository.UpdateLecon(LeconTitre, Input.Titre, Input.Description);
-        if (!verif.Result)
-        {
-            //TODO: Afficher un message d'erreur
             return RedirectToPage();
         }
 
-        return RedirectToPage();
+        var verif = _leconsRepository.UpdateLecon(LeconTitre, Input.Titre, Input.Description); //TODO: possibilité de changer que le titre ou la description
+        if (!verif.Result)
+        {
+            ModelState.AddModelError("Input.Titre", "Le titre de la leçon existe déjà");
+            return RedirectToPage();
+        }
+
+        return RedirectToPage("/EditLecon", new { LeconTitre = Input.Titre });
     }
 
     public async Task<IActionResult> OnPostDeleteExerciceAsync(string leconTitre, string exerciceTitre)

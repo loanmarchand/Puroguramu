@@ -144,6 +144,55 @@ public class ExercicesRepository : IExercisesRepository
         return Task.FromResult(true);
     }
 
+    public Exercise GetExercise(string leconTitre, string exerciceTitre)
+    {
+        var lecon = _context.Lecons
+            .Include(e => e.ExercicesList)
+            .FirstOrDefault(l => l.Titre == leconTitre);
+        if (lecon == null)
+        {
+            return new Exercise();
+        }
+
+        var exercice = lecon.ExercicesList?.FirstOrDefault(e => e.Titre == exerciceTitre);
+        return DtoMapper.MapExercices(exercice);
+    }
+
+    public async Task<bool> UpdateExercise(Exercise exercice, string leconTitre)
+    {
+        var lecon = _context.Lecons
+            .Include(e => e.ExercicesList)
+            .FirstOrDefault(l => l.Titre == leconTitre);
+        if (lecon == null)
+        {
+            return false;
+        }
+
+        var exerciceToUpdate = lecon.ExercicesList?.FirstOrDefault(e => e.Titre == exercice.Titre);
+        if (exerciceToUpdate == null)
+        {
+            return false;
+        }
+
+        if (exercice.Titre != exerciceToUpdate.Titre)
+        {
+            // Vérifier si le titre de l'exercice n'existe pas déjà
+            if (lecon.ExercicesList.Any(e => e.Titre == exercice.Titre))
+            {
+                return false;
+            }
+        }
+
+
+        exerciceToUpdate.Titre = exercice.Titre;
+        exerciceToUpdate.Enonce = exercice.Enonce;
+        exerciceToUpdate.Modele = exercice.Modele;
+        exerciceToUpdate.Solution = exercice.Solution;
+
+        await _context.SaveChangesAsync();
+        return true;
+    }
+
     private async Task UpdateExercisesPositions(Lecons lecon)
     {
         // Récupérer les positions actuelles des exercices de la leçon

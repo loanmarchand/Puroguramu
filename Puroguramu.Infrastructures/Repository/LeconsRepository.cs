@@ -231,27 +231,38 @@ public class LeconsRepository : ILeconsRepository
         return DtoMapper.MapLecon(lecon, null, null);
     }
 
-    public Task<bool> UpdateLecon(string leconTitre, string inputTitre, string inputDescription)
+    public async Task<bool> UpdateLecon(string leconTitre, string inputTitre, string inputDescription)
     {
-        var lecon = _context.Lecons
-            .Include(l => l.ExercicesList)
-            .FirstOrDefault(l => l.Titre == leconTitre);
+        var lecon = await _context.Lecons
+            .FirstOrDefaultAsync(l => l.Titre == leconTitre);
+
         if (lecon == null)
         {
-            return Task.FromResult(false);
+            return false; // La leçon n'existe pas
         }
 
-        //Verifier si le titre existe déjà
-        if (_context.Lecons.Any(l => l.Titre == inputTitre))
+        // Mettre à jour le titre si le nouveau titre est différent de l'actuel
+        if (inputTitre != lecon.Titre)
         {
-            return Task.FromResult(false);
+            // Vérifier que le nouveau titre n'existe pas déjà
+            if (_context.Lecons.Any(l => l.Titre == inputTitre))
+            {
+                return false; // Le titre existe déjà
+            }
+
+            lecon.Titre = inputTitre;
         }
 
-        lecon.Titre = inputTitre;
-        lecon.Description = inputDescription;
-        _context.SaveChanges();
-        return Task.FromResult(true);
+        // Mettre à jour la description si la nouvelle description est différente de l'actuelle
+        if (inputDescription != lecon.Description)
+        {
+            lecon.Description = inputDescription;
+        }
+
+        await _context.SaveChangesAsync();
+        return true; // Mise à jour réussie
     }
+
 
     public Task ToggleVisibilityLecon(string leconTitre)
     {

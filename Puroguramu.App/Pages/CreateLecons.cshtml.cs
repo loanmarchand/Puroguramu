@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Puroguramu.Domains.Repository;
@@ -6,6 +7,7 @@ using Puroguramu.Domains.Repository;
 namespace Puroguramu.App.Pages;
 
 [ValidateAntiForgeryToken]
+[Authorize(Policy = "IsTeacher")]
 public class CreateLecons : PageModel
 {
     private ILeconsRepository _leconsRepository;
@@ -30,9 +32,10 @@ public class CreateLecons : PageModel
             {
                 return RedirectToPage("/Dashboard");
             }
+
+            ModelState.AddModelError("Input.Titre", "Une leçon avec ce titre existe déjà.");
         }
 
-        // If we get here, something went wrong, afficher la page avec les erreurs, le titre existe déjà //TODO
         return Page();
     }
 

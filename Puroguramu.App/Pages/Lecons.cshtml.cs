@@ -23,10 +23,8 @@ public class Lecons : PageModel
 
     public Lecon? Lecon { get; set; }
 
-    public async void OnGetAsync()
+    public void OnGet()
     {
-        var user = await _userManager.GetUserAsync(User);
-        ViewData["Role"] = user.Role;
         Lecon = _leconsRepository.GetLeconWithStatuts(LeconTitre!, _userManager.GetUserId(User));
     }
 }
