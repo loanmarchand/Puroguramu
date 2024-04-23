@@ -355,9 +355,9 @@ namespace Puroguramu.Infrastructures.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "ef8d2ee2-c67f-4dbe-bae5-9ff1d28a3a13",
+                            Id = "8aa6148c-dea5-4546-8ad4-abb400220192",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "fd44043b-f445-4388-a5b1-c8e1b3dc8a25",
+                            ConcurrencyStamp = "c379f1c2-c3a2-44ad-b956-ecbdeebfde62",
                             Email = "admin@example.com",
                             EmailConfirmed = false,
                             Groupe = "0",
@@ -366,11 +366,11 @@ namespace Puroguramu.Infrastructures.Migrations
                             Nom = "admin",
                             NormalizedEmail = "ADMIN@EXAMPLE.COM",
                             NormalizedUserName = "ADMIN@EXAMPLE.COM",
-                            PasswordHash = "AQAAAAEAACcQAAAAEESXWUPKUai1LCEvDpN1hSrxlbuwWDljUSjL0mudl04VdGwSUs0nYC/oqIyA7yIgaA==",
+                            PasswordHash = "AQAAAAEAACcQAAAAENLBh6wShYzAgxvWxnYNNW4ajHk5q6zfOq0520Fvu7jkSuDloJe5ARn90CULEf+9vw==",
                             PhoneNumberConfirmed = false,
                             Prenom = "admin",
                             Role = 1,
-                            SecurityStamp = "6d188568-e4b2-4920-be7a-0c146643a2b6",
+                            SecurityStamp = "e77fd1e5-f20b-4fa3-a975-25bf9b9dc5f6",
                             TwoFactorEnabled = false,
                             UserName = "admin@example.com"
                         });
