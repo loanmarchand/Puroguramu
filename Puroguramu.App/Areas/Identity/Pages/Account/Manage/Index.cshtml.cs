@@ -149,10 +149,18 @@ namespace Puroguramu.App.Areas.Identity.Pages.Account.Manage
 
         public class ValidImageAttribute : ValidationAttribute
         {
+            private const int MaxFileSizeInBytes = 1048576; // 1 Mo en octets
+
             public bool IsImageValid(IFormFile file)
             {
                 // Vérification si le fichier existe et n'est pas vide
                 if (file == null || file.Length == 0)
+                {
+                    return false;
+                }
+
+                // Vérification de la taille du fichier
+                if (file.Length > MaxFileSizeInBytes)
                 {
                     return false;
                 }
@@ -188,7 +196,8 @@ namespace Puroguramu.App.Areas.Identity.Pages.Account.Manage
                 {
                     "FFD8FF", // JPEG
                     "89504E", // PNG
-                    "474946", // GIF
+
+                    //"474946", // GIF
                 };
 
                 // Lire les premiers octets du fichier pour obtenir le numéro magique
