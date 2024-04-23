@@ -10,14 +10,16 @@ namespace Puroguramu.App.Pages;
 [ValidateAntiForgeryToken]
 public class EditLecon : PageModel
 {
+    private readonly IExercisesRepository _exercisesRepository;
     private readonly ILeconsRepository _leconsRepository;
     private readonly UserManager<Utilisateurs> _userManager;
 
 
-    public EditLecon(ILeconsRepository leconsRepository, UserManager<Utilisateurs> userManager)
+    public EditLecon(ILeconsRepository leconsRepository, UserManager<Utilisateurs> userManager, IExercisesRepository exercisesRepository)
     {
         _leconsRepository = leconsRepository;
         _userManager = userManager;
+        _exercisesRepository = exercisesRepository;
     }
 
     public string ReturnUrl { get; set; }
@@ -46,10 +48,43 @@ public class EditLecon : PageModel
         if (!verif.Result)
         {
             //TODO: Afficher un message d'erreur
-            return Page();
+            return RedirectToPage();
         }
 
-        return RedirectToPage("/DashBoard");
+        return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostDeleteExerciceAsync(string leconTitre, string exerciceTitre)
+    {
+        var verif = await _exercisesRepository.DeleteExercice(leconTitre, exerciceTitre);
+        if (!verif)
+        {
+            //TODO: Afficher un message d'erreur
+        }
+
+        return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostChangeVisibilityAsync(string leconTitre, string exerciceTitre)
+    {
+        var verif = await _exercisesRepository.ChangeVisibility(leconTitre, exerciceTitre);
+        if (!verif)
+        {
+            //TODO: Afficher un message d'erreur
+        }
+
+        return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostMoveExerciceAsync(string leconTitre, string exerciceTitre, string direction)
+    {
+        var verif = await _exercisesRepository.MoveExercice(leconTitre, exerciceTitre, direction);
+        if (!verif)
+        {
+            //TODO: Afficher un message d'erreur
+        }
+
+        return RedirectToPage();
     }
 
     public class InputModel

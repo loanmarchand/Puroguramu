@@ -86,10 +86,7 @@ public class LeconsRepository : ILeconsRepository
 
     public Task<bool> CreateLecon(string inputTitre)
     {
-        var lecon = new Lecons
-        {
-            IdLecons = Guid.NewGuid().ToString(), Titre = inputTitre, Description = string.Empty, estVisible = true
-        };
+        var lecon = new Lecons { IdLecons = Guid.NewGuid().ToString(), Titre = inputTitre, Description = string.Empty, estVisible = true };
 
         // Ajouter la nouvelle leçon à la base de données si elle n'existe pas déjà
         if (_context.Lecons.Any(l => l.Titre == inputTitre))
@@ -98,6 +95,9 @@ public class LeconsRepository : ILeconsRepository
         }
 
         _context.Lecons.Add(lecon);
+
+        // Ajouter la position de la leçon
+        _context.PositionLecons.Add(new PositionLecons { IdPositionLecons = Guid.NewGuid().ToString(), Lecons = lecon, Position = _context.PositionLecons.Count() });
         _context.SaveChanges();
         return Task.FromResult(true);
     }
@@ -221,6 +221,13 @@ public class LeconsRepository : ILeconsRepository
         var lecon = _context.Lecons
             .Include(l => l.ExercicesList)
             .FirstOrDefault(l => l.Titre == leconTitre);
+
+        //Trier les exercices selon la position
+        if (lecon != null)
+        {
+            lecon.ExercicesList = lecon.ExercicesList.OrderBy(e => _context.PositionExercices.FirstOrDefault(p => p.Exercices.IdExercice == e.IdExercice)?.Position).ToList();
+        }
+
         return DtoMapper.MapLecon(lecon, null, null);
     }
 

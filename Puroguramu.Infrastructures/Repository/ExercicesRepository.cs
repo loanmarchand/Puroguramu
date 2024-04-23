@@ -35,7 +35,127 @@ public class ExercicesRepository : IExercisesRepository
         }
 
         lecon.ExercicesList?.Add(exercice);
+
+        // Ajouter la position de l'exercice
+        var position = new PositionExercices { IdPositionExercices = Guid.NewGuid().ToString(), Exercices = exercice, Position = lecon.ExercicesList.Count - 1 };
+        _context.PositionExercices.Add(position);
         _context.SaveChanges();
         return Task.FromResult(true);
+    }
+
+    public async Task<bool> DeleteExercice(string leconTitre, string exerciceTitre)
+    {
+        var lecon = _context.Lecons
+            .Include(e => e.ExercicesList)
+            .FirstOrDefault(l => l.Titre == leconTitre);
+        if (lecon == null)
+        {
+            return false;
+        }
+
+        var exercice = lecon.ExercicesList?.FirstOrDefault(e => e.Titre == exerciceTitre);
+        if (exercice == null)
+        {
+            return false;
+        }
+
+        // Supprimer les statuts de l'exercice
+        var statuts = _context.StatutExercices.Where(s => s.Exercice.IdExercice == exercice.IdExercice);
+        _context.StatutExercices.RemoveRange(statuts);
+
+        // Supprimer la position de l'exercice
+        var positionToRemove = _context.PositionExercices.FirstOrDefault(p => p.Exercices.IdExercice == exercice.IdExercice);
+        if (positionToRemove != null)
+        {
+            _context.PositionExercices.Remove(positionToRemove);
+        }
+
+        // Supprimer l'exercice de la liste des exercices de la leçon
+        lecon.ExercicesList.Remove(exercice);
+
+        await _context.SaveChangesAsync();
+
+        // Mettre à jour les positions des autres exercices de la leçon
+        await UpdateExercisesPositions(lecon);
+
+        return true;
+    }
+
+    public Task<bool> ChangeVisibility(string leconTitre, string exerciceTitre)
+    {
+        var lecon = _context.Lecons
+            .Include(e => e.ExercicesList)
+            .FirstOrDefault(l => l.Titre == leconTitre);
+        if (lecon == null)
+        {
+            return Task.FromResult(false);
+        }
+
+        var exercice = lecon.ExercicesList?.FirstOrDefault(e => e.Titre == exerciceTitre);
+        if (exercice == null)
+        {
+            return Task.FromResult(false);
+        }
+
+        exercice.EstVisible = !exercice.EstVisible;
+
+        _context.SaveChanges();
+        return Task.FromResult(true);
+    }
+
+    public Task<bool> MoveExercice(string leconTitre, string exerciceTitre, string directon)
+    {
+        var lecon = _context.Lecons
+            .Include(e => e.ExercicesList)
+            .FirstOrDefault(l => l.Titre == leconTitre);
+        if (lecon == null)
+        {
+            return Task.FromResult(false);
+        }
+
+        var exercice = lecon.ExercicesList?.FirstOrDefault(e => e.Titre == exerciceTitre);
+        if (exercice == null)
+        {
+            return Task.FromResult(false);
+        }
+
+        var position = _context.PositionExercices.FirstOrDefault(p => p.Exercices.IdExercice == exercice.IdExercice);
+        if (position == null)
+        {
+            return Task.FromResult(false);
+        }
+
+        var newPosition = directon == "up" ? position.Position - 1 : position.Position + 1;
+        if (newPosition < 0 || newPosition >= lecon.ExercicesList.Count)
+        {
+            return Task.FromResult(false);
+        }
+
+        var otherPosition = _context.PositionExercices.FirstOrDefault(p => p.Position == newPosition);
+        if (otherPosition == null)
+        {
+            return Task.FromResult(false);
+        }
+
+        otherPosition.Position = position.Position;
+        position.Position = newPosition;
+
+        _context.SaveChanges();
+        return Task.FromResult(true);
+    }
+
+    private async Task UpdateExercisesPositions(Lecons lecon)
+    {
+        // Récupérer les positions actuelles des exercices de la leçon
+        var exercicesIds = lecon.ExercicesList.Select(e => e.IdExercice).ToList();
+        var positions = _context.PositionExercices.Where(p => exercicesIds.Contains(p.Exercices.IdExercice)).ToList();
+
+        // Mettre à jour les positions des exercices
+        for (var i = 0; i < positions.Count; i++)
+        {
+            positions[i].Position = i;
+        }
+
+        await _context.SaveChangesAsync();
     }
 }

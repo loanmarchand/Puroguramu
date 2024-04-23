@@ -1,4 +1,4 @@
-﻿@page
+﻿@page "EditExercice/{LeconTitre}/{ExerciceTitre}"
 @model Puroguramu.App.Pages.EditExercice
 @Html.AntiForgeryToken()
 
@@ -13,30 +13,30 @@
         <section class="bg-white shadow-md  border rounded px-8 pt-6 pb-8 mb-4">
             <form id="editExerciceForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="space-y-4">
                 <h2 class="text-lg font-semibold text-center">Éditer NOMDELEXERCICE</h2>
-                <hr class="my-2" />
+                <hr class="my-2"/>
                 <div asp-validation-summary="ModelOnly" class="text-red-500"></div>
                 <div class="form-group">
                     <label asp-for="Input.Titre" class="block text-sm font-medium text-gray-700">Titre</label>
-                    <input asp-for="Input.Titre" class="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" autocomplete="username" aria-required="true" />
+                    <input asp-for="Input.Titre" class="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" autocomplete="username" aria-required="true"/>
                     <span asp-validation-for="Input.Titre" class="text-red-500 text-xs"></span>
                 </div>
                 <div class="form-group">
                     <label asp-for="Input.Enonce" class="block text-sm font-medium text-gray-700">Énoncé</label>
-                    <input asp-for="Input.Enonce" class="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" autocomplete="username" aria-required="true" />
+                    <input asp-for="Input.Enonce" class="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" autocomplete="username" aria-required="true"/>
                     <span asp-validation-for="Input.Enonce" class="text-red-500 text-xs"></span>
                 </div>
-                
+
                 <div class="form-group">
                     <label asp-for="Input.Modele" class="block text-sm font-medium text-gray-700">Modèle (Tests)</label>
-                    <input asp-for="Input.Modele" class="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" autocomplete="username" aria-required="true" />
+                    <input asp-for="Input.Modele" class="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" autocomplete="username" aria-required="true"/>
                     <span asp-validation-for="Input.Modele" class="text-red-500 text-xs"></span>
                 </div>
                 <div class="form-group">
                     <label asp-for="Input.Solution" class="block text-sm font-medium text-gray-700">Solution</label>
-                    <input asp-for="Input.Solution" class="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" autocomplete="username" aria-required="true" />
+                    <input asp-for="Input.Solution" class="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" autocomplete="username" aria-required="true"/>
                     <span asp-validation-for="Input.Solution" class="text-red-500 text-xs"></span>
                 </div>
-                
+
                 <div class="flex justify-center">
                     <button id="editExerciceSubmit" type="submit" class="mt-2 w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Éditer</button>
                 </div>
@@ -46,5 +46,5 @@
 </div>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+    <partial name="_ValidationScriptsPartial"/>
 }

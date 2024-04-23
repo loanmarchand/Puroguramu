@@ -7,4 +7,7 @@ public interface IExercisesRepository
     Exercise GetExercise(string exerciseId);
 
     Task<bool> CreateExerciceAsync(string leconTitre, string inputTitre);
+    Task<bool> DeleteExercice(string leconTitre, string exerciceTitre);
+    Task<bool> ChangeVisibility(string leconTitre, string exerciceTitre);
+    Task<bool> MoveExercice(string leconTitre, string exerciceTitre, string direction);
 }

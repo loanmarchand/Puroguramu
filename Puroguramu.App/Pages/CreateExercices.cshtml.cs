@@ -35,7 +35,8 @@ public class CreateExercices : PageModel
             return Page();
         }
 
-        return RedirectToPage(ReturnUrl);
+        ReturnUrl = "/EditLecon";
+        return RedirectToPage(ReturnUrl, new { LeconTitre });
     }
 
     public class InputModel
