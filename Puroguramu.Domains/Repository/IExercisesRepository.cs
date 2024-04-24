@@ -12,4 +12,5 @@ public interface IExercisesRepository
     Task<bool> MoveExercice(string leconTitre, string exerciceTitre, string direction);
     Exercise GetExercise(string leconTitre, string exerciceTitre);
     Task<bool> UpdateExercise(Exercise exercice, string tempTitre, string leconTitre);
+    void updateStatus(string leconTitre, string inputTitre);
 }

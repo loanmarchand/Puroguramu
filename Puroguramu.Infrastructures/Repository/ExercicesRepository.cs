@@ -4,6 +4,7 @@ using Puroguramu.Domains.Repository;
 using Puroguramu.Infrastructures.data;
 using Puroguramu.Infrastructures.dto;
 using Puroguramu.Infrastructures.Mapper;
+using Status = Puroguramu.Infrastructures.dto.Status;
 
 namespace Puroguramu.Infrastructures.Repository;
 
@@ -192,6 +193,31 @@ public class ExercicesRepository : IExercisesRepository
 
         await _context.SaveChangesAsync();
         return true;
+    }
+
+    public void updateStatus(string leconTitre, string inputTitre)
+    {
+        var lecon = _context.Lecons
+            .Include(e => e.ExercicesList)
+            .FirstOrDefault(l => l.Titre == leconTitre);
+        if (lecon == null)
+        {
+            return;
+        }
+
+        var exercice = lecon.ExercicesList?.FirstOrDefault(e => e.Titre == inputTitre);
+        if (exercice == null)
+        {
+            return;
+        }
+
+        var statut = _context.StatutExercices.Where(s => s.Exercice.IdExercice == exercice.IdExercice).ToList();
+        foreach (var s in statut.Where(s => s.Statut == Status.Passed))
+        {
+            s.Statut = Status.Started;
+        }
+
+        _context.SaveChanges();
     }
 
     private async Task UpdateExercisesPositions(Lecons lecon)

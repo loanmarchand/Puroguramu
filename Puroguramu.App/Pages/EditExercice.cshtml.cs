@@ -68,6 +68,7 @@ public class EditExercice : PageModel
             var res = _exercisesRepository.UpdateExercise(exercice,tempTitre, LeconTitre);
             if (res.Result)
             {
+                _exercisesRepository.updateStatus(LeconTitre,Input.Titre);
                 return RedirectToPage("/EditLecon", new { LeconTitre });
             }
 

@@ -299,6 +299,7 @@ public class LeconsRepository : ILeconsRepository
         var exercicesIds = lecon.ExercicesList.Select(e => e.IdExercice);
         var statutsExercices = _context.StatutExercices.Where(se => exercicesIds.Contains(se.Exercice.IdExercice));
         _context.StatutExercices.RemoveRange(statutsExercices);
+        _context.Exercices.RemoveRange(lecon.ExercicesList);
 
         // Supprimer la position de la leçon
         var positionLecon = _context.PositionLecons.FirstOrDefault(p => p.Lecons.IdLecons == lecon.IdLecons);
@@ -308,7 +309,6 @@ public class LeconsRepository : ILeconsRepository
         }
 
         // Supprimer la leçon et ses exercices
-        _context.Exercices.RemoveRange(lecon.ExercicesList);
         _context.Lecons.Remove(lecon);
 
         await _context.SaveChangesAsync();
