@@ -142,7 +142,8 @@ public class LeconsRepository : ILeconsRepository
     {
         // Charger tous les exercices pour un cours donné
         var lecons = await _context.Lecons
-            .Include(l => l.ExercicesList)
+            .Where(l => l.estVisible)
+            .Include(l => l.ExercicesList.Where(e => e.EstVisible))
             .ToListAsync();
 
         // Charger les statuts séparément
