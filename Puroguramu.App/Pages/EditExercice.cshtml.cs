@@ -42,6 +42,7 @@ public class EditExercice : PageModel
         }
 
         var exercice = _exercisesRepository.GetExercise(LeconTitre, ExerciceTitre);
+        var tempTitre = exercice.Titre;
         exercice.Titre = Input.Titre;
         exercice.Enonce = Input.Enonce;
         exercice.Difficulte = Input.Difficulte;
@@ -64,7 +65,7 @@ public class EditExercice : PageModel
 
         if (success)
         {
-            var res = _exercisesRepository.UpdateExercise(exercice, LeconTitre);
+            var res = _exercisesRepository.UpdateExercise(exercice,tempTitre, LeconTitre);
             if (res.Result)
             {
                 return RedirectToPage("/EditLecon", new { LeconTitre });

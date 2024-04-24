@@ -158,7 +158,7 @@ public class ExercicesRepository : IExercisesRepository
         return DtoMapper.MapExercices(exercice);
     }
 
-    public async Task<bool> UpdateExercise(Exercise exercice, string leconTitre)
+    public async Task<bool> UpdateExercise(Exercise exercice, string tempTitre, string leconTitre)
     {
         var lecon = _context.Lecons
             .Include(e => e.ExercicesList)
@@ -168,13 +168,13 @@ public class ExercicesRepository : IExercisesRepository
             return false;
         }
 
-        var exerciceToUpdate = lecon.ExercicesList?.FirstOrDefault(e => e.Titre == exercice.Titre);
+        var exerciceToUpdate = lecon.ExercicesList?.FirstOrDefault(e => e.Titre == tempTitre);
         if (exerciceToUpdate == null)
         {
             return false;
         }
 
-        if (exercice.Titre != exerciceToUpdate.Titre)
+        if (tempTitre != exercice.Titre)
         {
             // Vérifier si le titre de l'exercice n'existe pas déjà
             if (lecon.ExercicesList.Any(e => e.Titre == exercice.Titre))
