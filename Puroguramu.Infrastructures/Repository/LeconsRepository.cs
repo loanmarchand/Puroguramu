@@ -156,6 +156,11 @@ public class LeconsRepository : ILeconsRepository
             .SelectMany(l => l.ExercicesList!.Select(e => new { LeconTitre = l.Titre, Exercice = e }))
             .ToList();
 
+        if (exercices.Count == 0)
+        {
+            return (string.Empty, string.Empty);
+        }
+
         // Trouver les exercices avec statuts
         var exercicesAvecStatuts = from e in exercices
             join s in statuts on e.Exercice.IdExercice equals s.Exercice.IdExercice into es
