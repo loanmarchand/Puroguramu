@@ -25,6 +25,11 @@
                     <input asp-for="Input.Enonce" class="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" autocomplete="username" aria-required="true"/>
                     <span asp-validation-for="Input.Enonce" class="text-red-500 text-xs"></span>
                 </div>
+                <div class="form-group">
+                    <label asp-for="Input.Difficulte" class="block text-sm font-medium text-gray-700">Difficulté</label>
+                    <input asp-for="Input.Difficulte" class="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" autocomplete="username" aria-required="true"/>
+                    <span asp-validation-for="Input.Difficulte" class="text-red-500 text-xs"></span>
+                </div>
 
                 <div class="form-group">
                     <label class="block text-sm font-medium text-gray-700">Modèle (Tests)</label>

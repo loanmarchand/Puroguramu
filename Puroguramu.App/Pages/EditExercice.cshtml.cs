@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Puroguramu.Domains;
@@ -30,7 +31,7 @@ public class EditExercice : PageModel
     public void OnGet()
     {
         var exercice = _exercisesRepository.GetExercise(LeconTitre, ExerciceTitre);
-        Input = new InputModel { Titre = exercice.Titre, Enonce = exercice.Enonce, Modele = exercice.Modele, Solution = exercice.Solution };
+        Input = new InputModel { Titre = exercice.Titre, Enonce = exercice.Enonce, Modele = exercice.Modele, Solution = exercice.Solution, Difficulte = exercice.Difficulte};
     }
 
     public IActionResult OnPost()
@@ -43,6 +44,7 @@ public class EditExercice : PageModel
         var exercice = _exercisesRepository.GetExercise(LeconTitre, ExerciceTitre);
         exercice.Titre = Input.Titre;
         exercice.Enonce = Input.Enonce;
+        exercice.Difficulte = Input.Difficulte;
         exercice.Modele = Input.Modele;
         exercice.Solution = Input.Solution;
 
@@ -76,12 +78,22 @@ public class EditExercice : PageModel
 
     public class InputModel
     {
+        [Required(ErrorMessage = "Le champ titre est requis")]
+        [RegularExpression(@"^(?!.*<|>).*.{5,}$", ErrorMessage = "Le titre doit contenir au moins 5 caractères et ne doit pas inclure les symboles <>.")]
         public string Titre { get; set; }
 
+        [Required(ErrorMessage = "Le champ enoncé est requis")]
+        [RegularExpression(@"^(?!.*<|>).*.{5,}$", ErrorMessage = "L'énoncé doit contenir au moins 5 caractères et ne doit pas inclure les symboles <>.")]
         public string Enonce { get; set; }
 
+        [Required(ErrorMessage = "Le champ difficulte est requis")]
+        [RegularExpression(@"^(?!.*<|>).*.{5,}$", ErrorMessage = "L'énoncé doit contenir au moins 5 caractères et ne doit pas inclure les symboles <>.")]
+        public string Difficulte { get; set; }
+
+        [Required(ErrorMessage = "Le champ modele est requis")]
         public string Modele { get; set; }
 
+        [Required(ErrorMessage = "Le champ solution est requis")]
         public string Solution { get; set; }
     }
 }

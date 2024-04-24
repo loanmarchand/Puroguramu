@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -26,9 +27,12 @@ public class EditLecon : PageModel
 
     public string ReturnUrl { get; set; }
 
-    [BindProperty] public InputModel Input { get; set; }
+    [BindProperty]
+    public InputModel Input { get; set; }
 
-    [BindProperty(SupportsGet = true)] public string LeconTitre { get; set; }
+    [BindProperty(SupportsGet = true)]
+    public string LeconTitre { get; set; }
+
     public Lecon Lecon { get; set; }
 
     public async void OnGetAsync()
@@ -39,19 +43,20 @@ public class EditLecon : PageModel
 
     public IActionResult OnPost()
     {
-        if (!ModelState.IsValid)
+        if (ModelState.IsValid)
         {
-            return RedirectToPage();
-        }
+            var verif = _leconsRepository.UpdateLecon(LeconTitre, Input.Titre, Input.Description); //TODO: possibilité de changer que le titre ou la description
+            if (!verif.Result)
+            {
+                ModelState.AddModelError("Input.Titre", "Le titre de la leçon existe déjà");
+                return Page();
+            }
 
-        var verif = _leconsRepository.UpdateLecon(LeconTitre, Input.Titre, Input.Description); //TODO: possibilité de changer que le titre ou la description
-        if (!verif.Result)
-        {
-            ModelState.AddModelError("Input.Titre", "Le titre de la leçon existe déjà");
-            return RedirectToPage();
+            return RedirectToPage("/EditLecon", new { LeconTitre = Input.Titre });
         }
+        Lecon = _leconsRepository.GetLecon(LeconTitre);
 
-        return RedirectToPage("/EditLecon", new { LeconTitre = Input.Titre });
+        return Page();
     }
 
     public async Task<IActionResult> OnPostDeleteExerciceAsync(string leconTitre, string exerciceTitre)
@@ -60,6 +65,8 @@ public class EditLecon : PageModel
         if (!verif)
         {
             //TODO: Afficher un message d'erreur
+            /*Lecon = _leconsRepository.GetLecon(LeconTitre);
+            return Page();*/
         }
 
         return RedirectToPage();
@@ -71,6 +78,8 @@ public class EditLecon : PageModel
         if (!verif)
         {
             //TODO: Afficher un message d'erreur
+            /*Lecon = _leconsRepository.GetLecon(LeconTitre);
+            return Page();*/
         }
 
         return RedirectToPage();
@@ -82,6 +91,8 @@ public class EditLecon : PageModel
         if (!verif)
         {
             //TODO: Afficher un message d'erreur
+            /*Lecon = _leconsRepository.GetLecon(LeconTitre);
+            return Page();*/
         }
 
         return RedirectToPage();
@@ -89,8 +100,11 @@ public class EditLecon : PageModel
 
     public class InputModel
     {
+        [Required(ErrorMessage = "Le champ titre est requis")]
+        [RegularExpression(@"^(?!.*<|>).*.{5,}$", ErrorMessage = "Le titre doit contenir au moins 5 caractères et ne doit pas inclure les symboles <>.")]
         public string Titre { get; set; }
 
+        [RegularExpression(@"^(?!.*<|>).*.{5,}$", ErrorMessage = "La description doit contenir au moins 5 caractères et ne doit pas inclure les symboles <>.")]
         public string Description { get; set; }
     }
 }

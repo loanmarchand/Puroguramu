@@ -188,6 +188,7 @@ public class ExercicesRepository : IExercisesRepository
         exerciceToUpdate.Enonce = exercice.Enonce;
         exerciceToUpdate.Modele = exercice.Modele;
         exerciceToUpdate.Solution = exercice.Solution;
+        exerciceToUpdate.Difficulte = exercice.Difficulte;
 
         await _context.SaveChangesAsync();
         return true;
