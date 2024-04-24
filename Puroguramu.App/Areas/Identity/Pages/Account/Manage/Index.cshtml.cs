@@ -14,6 +14,7 @@ using Puroguramu.Infrastructures.dto;
 
 namespace Puroguramu.App.Areas.Identity.Pages.Account.Manage
 {
+    [ValidateAntiForgeryToken]
     public class IndexModel : PageModel
     {
         private readonly UserManager<Utilisateurs> _userManager;
