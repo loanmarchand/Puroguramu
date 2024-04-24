@@ -92,10 +92,7 @@ public class Exercice : PageModel
         if (ShowSolution is not 1)
         {
             await _statutExerciceRepository.UpdateStatut(_leconsRepository.GetExerciceId(LeconTitre, Titre), _userManager.GetUserId(User), _result.Status);
-            if (_result.Status != ExerciseStatus.Passed)
-            {
-                await _statutExerciceRepository.UpdateSolutionTempo(_leconsRepository.GetExerciceId(LeconTitre, Titre), _userManager.GetUserId(User), Proposal);
-            }
+            await _statutExerciceRepository.UpdateSolutionTempo(_leconsRepository.GetExerciceId(LeconTitre, Titre), _userManager.GetUserId(User), Proposal);
         }
     }
 
@@ -104,10 +101,10 @@ public class Exercice : PageModel
         var user = _userManager.GetUserAsync(User).Result;
         var prochainExercice = await _leconsRepository.GetNextExerciceAsync(user.Id);
         Console.WriteLine(prochainExercice);
-        if (prochainExercice.Item1 == string.Empty || prochainExercice.Item2 == string.Empty)
+        if (prochainExercice.Item1 == null || prochainExercice.Item2 == null ||prochainExercice.Item1 == string.Empty || prochainExercice.Item2 == string.Empty)
         {
             //Afficher un pop-up pas d'exercice disponible
-            return RedirectToPage();
+            return RedirectToPage("/Dashboard");
         }
 
         return RedirectToPage("/Exercice", new { Titre = prochainExercice.Item1, LeconTitre = prochainExercice.Item2 });

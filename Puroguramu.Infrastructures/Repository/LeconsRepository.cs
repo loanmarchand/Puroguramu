@@ -156,7 +156,7 @@ public class LeconsRepository : ILeconsRepository
             .SelectMany(l => l.ExercicesList!.Select(e => new { LeconTitre = l.Titre, Exercice = e }))
             .ToList();
 
-        if (exercices.Count == 0)
+        if (exercices.Count == 1)
         {
             return (string.Empty, string.Empty);
         }
