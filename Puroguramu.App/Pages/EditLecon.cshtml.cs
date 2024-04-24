@@ -33,8 +33,6 @@ public class EditLecon : PageModel
 
     public async void OnGetAsync()
     {
-        var user = await _userManager.GetUserAsync(User);
-        ViewData["Role"] = user.Role;
         Lecon = _leconsRepository.GetLecon(LeconTitre);
         Input = new InputModel { Titre = Lecon.Titre, Description = Lecon.Description };
     }
