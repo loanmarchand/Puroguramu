@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Puroguramu.App.Middlewares;
 using Puroguramu.Domains;
 using Puroguramu.Domains.Repository;
+using Puroguramu.Infrastructures.Configuration;
 using Puroguramu.Infrastructures.data;
 using Puroguramu.Infrastructures.dto;
 using Puroguramu.Infrastructures.Repository;
@@ -68,49 +69,10 @@ app.UseAuthorization();
 app.MapRazorPages();
 app.MapBlazorHub();
 
-EnsureRolesCreated(app.Services).GetAwaiter().GetResult();
+UtilisateursConfiguration.EnsureRolesCreated(app.Services).GetAwaiter().GetResult();
+LeconsConfiguration.EnsureDefaultLeconCreated(app.Services).GetAwaiter().GetResult();
 
 app.Run();
 
-async Task EnsureRolesCreated(IServiceProvider serviceProvider)
-{
-    using var scope = serviceProvider.CreateScope();
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<Utilisateurs>>();
 
 
-    await EnsureRoleAsync(roleManager, "Teacher");
-    await EnsureRoleAsync(roleManager, "Student");
-
-    await EnsureDefaultTeacherAsync(userManager);
-
-    async Task EnsureDefaultTeacherAsync(UserManager<Utilisateurs> userManager1)
-    {
-        var defaultTeacher = "teacher@student.helmo.be";
-        var user = await userManager1.FindByEmailAsync(defaultTeacher);
-
-        if (user == null)
-        {
-            var teacher = new Utilisateurs
-            {
-                UserName = defaultTeacher,
-                Email = defaultTeacher,
-                Role = Role.Teacher,
-                Matricule = "P200000",
-                Nom = "teacher",
-                Prenom = "teacher",
-                Groupe = "2i1"
-            };
-            await userManager1.CreateAsync(teacher, "Romain1*");
-            await userManager1.AddToRoleAsync(teacher, "Teacher");
-        }
-    }
-}
-
-async Task EnsureRoleAsync(RoleManager<IdentityRole> roleManager, string roleName)
-{
-    if (!await roleManager.RoleExistsAsync(roleName))
-    {
-        await roleManager.CreateAsync(new IdentityRole(roleName));
-    }
-}
